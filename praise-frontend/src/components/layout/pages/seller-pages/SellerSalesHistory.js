@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import SearchBarComponent from '../../page-components/utils/SearchBarComponent';
 import { salesHistory } from '../../test-api/products/SalesHistoryProducts';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,21 +9,23 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Link } from 'react-router-dom'; 
 import AnimatedTile from '../../page-components/utils/AnimatedTile';
+import Header from '../../page-components/utils/Header';
 
 function SellerSalesHistory() {
 
   const [ filteredProducts, setFilteredProducts ] = useState(salesHistory);
 
+  const searchBarComponent = useMemo(() => (
+    <SearchBarComponent elements={salesHistory} setFilteredElements={setFilteredProducts}/>
+  ), [setFilteredProducts]);
+
   return (
     <div>
       <div className='page'>
-        <div className='page-header'>
-          <div>
-            <h2>Sales History</h2>
-            <span>Review your sales history to gain insights and track revenue.</span>
-          </div>
-          <SearchBarComponent elements={salesHistory} setFilteredElements={setFilteredProducts}/>
-      </div>
+        <Header
+        searchBar={searchBarComponent}
+        title='Sales History'
+        description='Review your sales history to gain insights and track revenue.'/>
       <div className='page-content'>
         <ListView elements={filteredProducts} ElementComponent={SalesHistoryProduct}/>
 

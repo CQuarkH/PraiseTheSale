@@ -9,6 +9,7 @@ import FeedbackIcon from '@mui/icons-material/Feedback';
 import ProductView from '../page-components/ProductView';
 import { commonRoutes } from './commonRoutes';
 import ComplaintView from '../pages/admin-pages/ComplaintView';
+import AdminUserView from '../pages/admin-pages/AdminUserView';
 
 
 export const adminRoutes = [
@@ -31,6 +32,10 @@ export const adminRoutes = [
       title: 'Users',
       icon: <GroupIcon className='sidebar-option-icon'/>,
       showInSidebar: true
+    },
+    {
+      path: '/admin-users/:userID',
+      component: AdminUserView
     },
     {
       path: '/admin-products',

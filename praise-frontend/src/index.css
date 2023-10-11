@@ -21,8 +21,20 @@ input{
   padding: 15px;
 }
 
+.input-error{
+  border: '2px solid red'; 
+  outline-color: 'red';
+}
+
+.input-error:focus{
+  outline: 2px solid red;
+
+}
+
 textarea {
   padding: 10px;
+  border: none;
+  resize: none;
 }
 
 
@@ -39,6 +51,32 @@ textarea {
   color: white; 
   padding: 1rem; 
 }
+
+.content-container{
+  margin-left: 14%;
+  padding: 1rem;
+}
+
+.menu-button {
+  display: none;
+}
+
+.drawer {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background-color: #1B1F31;
+  color: white;
+  z-index: 1000; 
+}
+
+
+
 
 .sidebar-header{
   cursor: pointer;
@@ -93,17 +131,11 @@ textarea {
   padding: 4px;
 }
 
-.content-container{
-  margin-left: 14%;
-  padding: 1rem;
-}
-
-
-
-
-
-.page-header{
+.page-header-sticky{
   display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 200;
   justify-content: space-between;
   background-color: #1B1F31;
   color: white;
@@ -112,6 +144,23 @@ textarea {
 }
 
 
+.page-header{
+  display: flex;
+  z-index: 200;
+  justify-content: space-between;
+  background-color: #1B1F31;
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.page-header h2 {
+  transition: all 0.3s ease;
+}
+
+.page-header.scrolled span {
+  display: none;
+}
 
 .page-content{
   margin-top: 2%;
@@ -170,6 +219,7 @@ textarea {
   align-items: center;
   margin-left: 20px; 
   width: 14%;
+  min-width: 200px;
   height: 95vh;
   background-color: #1B1F31;
   color: white;
@@ -218,8 +268,9 @@ textarea {
 }
 
 .content-card{
+  min-width: 300px;
   cursor: pointer;
-  flex: 0 0 auto; 
+  flex: 0 0 'auto'; 
   width: calc(25% - 10px); 
   margin-bottom: 3%; 
   background-color: #2A304C;
@@ -228,11 +279,13 @@ textarea {
   display: flex;
   flex-direction: column;
   border-radius: 10px;
+  max-height: 600px;
+  
 }
 
 .content-card img{
   width: 100%;
-  height: 300px;
+  height: 60%;
   object-fit: cover;
   border-radius: 10px;
   
@@ -289,6 +342,12 @@ textarea {
   padding: 10px;
 }
 
+.column{
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: normal;
+}
+
 .standout-list-tile-invert-column{
   color: white;
   margin-bottom: 2%;
@@ -323,8 +382,7 @@ textarea {
   flex: 1;
   display: flex;
   width: 100%;
-  margin-bottom: 20px;
-  padding: 10px;
+  justify-content: space-between;
 }
 
 .complaint-input-container {
@@ -367,6 +425,7 @@ textarea {
   display: flex;
   width: 100%;
   justify-content: flex-end;
+  margin-bottom: 10px;
 }
 
 .complaint-send-button{
@@ -425,16 +484,9 @@ textarea {
   flex-wrap: nowrap;
 }
 
-.content-card{
-  margin: 20px;
-  min-width: 200px;
-  min-height: 100px;
-}
 
-.content-card-image{
-  max-width: 100%;
-  max-height: 30%;
-}
+
+
 
 .list{
   flex: 1
@@ -489,6 +541,15 @@ textarea {
   height: 100%;
   display: flex;
 
+}
+
+.button-surface{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1B1F31;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .left-side-card{
@@ -563,11 +624,14 @@ textarea {
 }
 
 .empty-list-message {
-  text-align: center;
-  padding: 20px;
-  color: #FFFFFF;
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+ 
 }
+
 
 .empty-list-message p {
   margin: 0;
@@ -575,6 +639,187 @@ textarea {
   font-size: 16px;
   
 }
+
+.log-card-container{
+  display: flex;
+  flex-direction: column;
+  background-color: #1B1F31;
+  border-radius: 10px;
+  padding: 10px;
+  height: 50%;
+  width: 50%;
+}
+
+.log-card-header{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.log-card-content{
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-aligned-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-product-card{
+  color: white;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #1B1F31;
+  width: 80%;
+  height: 80%;
+}
+
+.create-product-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.create-product-content{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ml-0{
+  margin-left: 0;
+}
+
+.select-input-container{
+  color: white !important;
+
+}
+
+.select-input{
+  background-color: #1B1F31 !important;
+  color: white !important;
+}
+
+.select-input-option{
+  background-color: #2A304C !important;
+  color: white !important;
+}
+
+.select-input-option:hover {
+  background-color: #2D2A4C !important;
+}
+
+.menu-paper {
+  background-color: #2A304C !important; 
+}
+
+.expanded-button{
+  display: grid;
+  place-content: center;
+  width: 100%;
+  border-radius: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #6B77AE;
+  color: #111111;
+}
+
+.selected-image{
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.centered-content{
+  display: grid;
+  place-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay{
+  display: grid;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000; 
+  height: 100%;
+  width: 100%;
+  place-content: center;
+  background-color: #0D0F17;
+}
+
+.login-card{
+  height: 70vh;
+  width: 60vw;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  background-color: #1B1F31;
+
+}
+
+
+.login-form{
+  flex: 1;
+  display: flex;
+  max-height: 100%;
+  flex-direction: column;
+}
+
+.text-button{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #6B77AE;
+  color: #111111;
+}
+
+@media (max-width: 1238px) {
+  .sidebar {
+    display: none;
+  }
+
+  .hide-on-responsive {
+    display: none;
+  }
+
+  .menu-button {
+    display: block;
+  }
+
+  .content-container{
+    margin-left: 2%;
+  }
+}
+
+@media (max-width: 720px){
+  .page-header-sticky{
+    flex-direction: column;
+  }
+
+  .page-header-sticky .searchbar-container{
+    width: 98%;
+  }
+
+  .content-card{
+    width: 90%;
+  }
+}
+
+
 
 
 

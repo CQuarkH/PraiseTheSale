@@ -51,20 +51,26 @@ function AdminHome() {
           exit="exit">
             {
               <CardRow 
+              rowStyle={{height: '60vh'}}
+              cardStyle={{marginLeft: '20px', justifyContent: 'space-between', height: '80%'}}
               linkPath='/product/'
               title='Products of the week'
               className='content-row'
               elements={products} 
               iconMap={productIcons} 
-              propertiesToShow={['price', 'owner']}/>
+              propertiesToShow={['price', 'owner']}
+              propRoute={'id'}/>
             }
             {
                <CardRow
+               cardStyle={{marginLeft: '20px'}}
+               linkPath='/admin-users/'
                title='Users of the week'
                className='content-row'
                elements={users} 
                iconMap={usersIcons} 
-               propertiesToShow={['userType']}/>
+               propertiesToShow={['userType']}
+               propRoute={['id']}/>
             }
         </motion.div>
      </div>

@@ -1,12 +1,19 @@
-import {React, useState, useEffect, useMemo} from 'react';
+import {React, useState, useMemo} from 'react';
 import SearchBarComponent from './utils/SearchBarComponent';
 import { productList } from '../test-api/products/Product';
 import ListView from './utils/ListView';
 import Filters from './utils/Filters';
 import ProductTile from './utils/ProductTile';
+import Header from './utils/Header';
 
-
-function ProductListComponent({title, description, filterGroups, searchByList, customPageHeader, customElements}) {
+function ProductListComponent({
+  title, 
+  description, 
+  filterGroups, 
+  searchByList, 
+  customPageHeader, 
+  customElements,
+  button}) {
 
     const products = customElements ?? productList;
 
@@ -33,28 +40,30 @@ function ProductListComponent({title, description, filterGroups, searchByList, c
     }), []);
 
     const searchBy = useMemo(() => searchByList ?? ['name', 'id', 'category'], []);
+
+    const searchBarComponent = useMemo(() => (
+      <SearchBarComponent 
+            elements={products} 
+            setFilteredElements={setFilteredProducts}
+            searchBy={searchBy}/>
+    ), [setFilteredProducts]);
   
 
     return (
       <div className='page'>
-      <div className='page-header'>
-          { customPageHeader ?? (
-            <>
-            <div>
-            <h2>{title}</h2>
-            <span>{description}</span>
-            </div>
-            </>
-          )}
-          <SearchBarComponent 
-            elements={products} 
-            setFilteredElements={setFilteredProducts}
-            searchBy={searchBy}/>
-      </div>
+      <Header
+      title={title}
+      description={description}
+      customHeader={customPageHeader}
+      searchBar={searchBarComponent}/>
       <div className='page-content'>
         <ListView elements={filteredProducts} ElementComponent={ProductTile}/>
         <Filters elements={products} filterGroups={filters} onFilterChange={setFilteredProducts}/>
-          
+        {
+          button && (
+           button
+          )
+        }
       </div>
      
       </div>

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import SellIcon from '@mui/icons-material/Sell';
 import ProductListComponent from './ProductListComponent';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AnimatedButton from './utils/AnimatedButton';
 
 function ProductsByCategory() {
 
@@ -25,14 +26,18 @@ function ProductsByCategory() {
   }), []);
 
   const PageHeader = () => (<>
-        <div className='block-tile'>
-             <div onClick={() => navigate(-1)}>
-                <ArrowBackIcon/>
-            </div>  
-            <h2> Products By Category </h2>
+        <div className='block-tile'
+        style={{flexDirection: 'row', flex: 2, alignItems: 'center', justifyContent: 'space-between'}}>
+             <div className='flex-aligned-container'>
+             <AnimatedButton
+            Icon={<ArrowBackIcon/>}
+            margin={10}
+            onClick={() => navigate(-1)}/> 
+              <h2> Products By Category </h2>
+             </div>
             <span>
                 <div className='standout-list-tile-invert'>
-                    <SellIcon/>
+                    <SellIcon style={{marginRight: '10px'}}/>
                     <span> {categoryName} </span>
                 </div>
             </span>

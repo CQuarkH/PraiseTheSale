@@ -2,8 +2,18 @@ import React from "react";
 import AnimatedTile from "./AnimatedTile";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import CustomCard from "./CustomCard";
 
-function CardRow({ title, elements, iconMap, propertiesToShow, className, linkPath }) {
+function CardRow({ 
+  title, 
+  elements, 
+  iconMap, 
+  propertiesToShow, 
+  className, 
+  linkPath, 
+  propRoute, 
+  cardStyle,
+  rowStyle }) {
 
     const itemVariants = {
       hidden: { y: 20, opacity: 0 },
@@ -12,39 +22,20 @@ function CardRow({ title, elements, iconMap, propertiesToShow, className, linkPa
     };
   
     return (
-      <div className='content-row-container'>
+      <div className='content-row-container' style={rowStyle}>
         <h4 style={{marginLeft: "20px"}}>{title}</h4>
         <div className={className}>
         {
           elements.map(element => (
             <AnimatePresence>
-            <AnimatedTile
-            className='content-card'
-            style= {{width: '200px', minHeight: '50px'}}
-            key={element.id} 
-            variants={itemVariants}>
-             <Link to={`${linkPath}${element.id}`} style={{ textDecoration: 'none', color: 'inherit'}}>
-              <img className = 'content-card-image' src={element.profileImage ?? element.image}/>
-              <h4> { element.name }</h4>
-              {propertiesToShow.map(key => {
-                if (key === 'description') {
-                  return (
-                    <div className='standout-list-tile'>
-                      <p key={key}>{element[key]}</p>
-                    </div>
-                  );
-                } else if (element[key]) { 
-                  return (
-                    <div key={key} className="standout-list-tile">
-                      {iconMap[key]}
-                      {element[key]}
-                    </div>
-                  );
-                }
-                return null; 
-              })}
-             </Link>
-            </AnimatedTile>
+             <CustomCard
+             element={element}
+             propsToShow={propertiesToShow}
+             iconMap={iconMap}
+             style={cardStyle}
+             linkRoute={linkPath}
+             propRoute={propRoute}
+             />
             </AnimatePresence>
             
           ))

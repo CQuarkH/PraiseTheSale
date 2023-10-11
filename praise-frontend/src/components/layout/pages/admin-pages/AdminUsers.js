@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { buyers, sellers } from '../../test-api/test-users/Users';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import SearchBarComponent from '../../page-components/utils/SearchBarComponent';
+import ListView from '../../page-components/utils/ListView';
+import CustomCard from '../../page-components/utils/CustomCard';
+import Header from '../../page-components/utils/Header';
+import Tab from '../../page-components/utils/Tab';
+
 
 const containerVariants = {
   hidden: { opacity: 1, scale: 0.8 },
@@ -16,27 +21,31 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1 },
-  exit: { y: 20, opacity: 0 } 
-};
-
 function AdminUsers() {
-
   const [activeTab, setActiveTab] = useState('sellers');
+  const [filteredUsers, setFilteredUsers] = useState(sellers); 
+
+  const searchBarComponent = useMemo(() => (
+    <SearchBarComponent 
+      elements={activeTab === 'sellers' ? sellers : buyers} 
+      setFilteredElements={setFilteredUsers}
+    />
+  ), [activeTab]);
+
+  function handleTabChange(tab) {
+    setActiveTab(tab);
+    setFilteredUsers(tab === 'sellers' ? sellers : buyers);
+  }
 
 
   return (
     <div>
       <div className='page'>
-        <div className='page-header'>
-          <div>
-            <h2>Users</h2>
-            <span>Manage and oversee all user accounts, ensuring a secure and vibrant community for seamless platform interactions.</span>
-          </div>
-          
-        </div>
+        <Header
+        title='Users'
+        description='Manage and oversee all user accounts, ensuring a secure and vibrant community for seamless platform interactions.'
+        searchBar={searchBarComponent}
+        />
         <motion.div 
         className='page-content'
         variants={containerVariants}
@@ -47,81 +56,67 @@ function AdminUsers() {
         <Tab 
             label="Sellers"
             isActive={activeTab === 'sellers'}
-            onClick={() => setActiveTab('sellers')}
+            onClick={() => handleTabChange('sellers')}
           />
           <Tab 
             label="Buyers"
             isActive={activeTab === 'buyers'}
-            onClick={() => setActiveTab('buyers')}
+            onClick={() => handleTabChange('buyers')}
           />
         </div>
-          {activeTab === 'sellers' && <UserView users={sellers} role='sellers' />}
-          {activeTab === 'buyers' && <UserView users={buyers} role='buyers' />}
+          { <ListView grid={true} 
+          elements={ filteredUsers}
+          ElementComponent={
+            activeTab === 'sellers' ? 
+            SellerComponent : BuyerComponent
+          }/>}
         </motion.div>
       </div>
     </div>
   );
 }
 
-function UserView({ users, role }) {
+function BuyerComponent({ element: buyer }){
   return (
-    <div className='tab-content'>
-      {users.map(user => (
-        <AnimatePresence>
-        <motion.div 
-        className='content-card'
-        key={user.id} 
-        variants={itemVariants}
-        whileHover= {{scale: 1.05}}
-        whileTap={{scale: 0.9}}>
-          <img src={user.profileImage}/>
-          <h4> {user.name} </h4>
-
-          {role === 'buyers' ? (
-            <div className='standout-list-tile'>
-            <p>{user.description}</p>
-            </div>
-          ) : (
-            <div>
-              <div className='standout-list-tile'>
-              <StarRateIcon fontSize='small'/> 
-              <span> {user.rating} in PraiseTheSale</span>
-            </div>
-            <div className='standout-list-tile'>
-             <Inventory2Icon fontSize='small'/>
-              <span> {user.productList.length} {user.productList.length === 1 ? "product" : "products"}</span>
-            </div>
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-      ))}
-    </div>
-  );
+    <AnimatePresence>
+      <CustomCard
+      element={buyer}
+      propsToShow={['description']}
+      propFormat={{description: 'p'}}
+      iconMap={{}}
+      linkRoute='/admin-users/'
+      propRoute={['id']}
+      />
+    </AnimatePresence>
+  )
 }
 
-function Tab({ label, isActive, onClick }) {
+function SellerComponent({ element: seller}){
+
+  const sellerIconMap = {
+    rating: <StarRateIcon/>,
+    productLength: <Inventory2Icon/>
+  }
+
+  const sellerPropsLabel = {
+    rating: 'in PraiseTheSale.',
+    productLength: 'products.'
+  }
+
   return (
-    <motion.div 
-      onClick={onClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      style={{
-        width: '40%',
-        textAlign: 'center',
-        padding: '10px 20px',
-        backgroundColor: isActive ? '#6B77AE' : '#1B1F31',
-        color: isActive ? '#111111' : '#FFFFFF',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        marginRight: '10px',
-        userSelect: 'none'
-      }}
-    >
-      {label}
-    </motion.div>
-  );
+    <AnimatePresence>
+      <CustomCard
+      element={seller}
+      propsToShow={['rating', 'productLength']}
+      propsLabel= {sellerPropsLabel}
+      iconMap={sellerIconMap}
+      linkRoute={'/admin-users/'}
+      propRoute={['id']}/>
+    </AnimatePresence>
+
+  )
 }
+
 
 
 

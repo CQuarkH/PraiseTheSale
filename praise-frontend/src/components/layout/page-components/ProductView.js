@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
-import { productList, ownersList } from '../test-api/products/Product';
+import { productList} from '../test-api/products/Product';
+import { sellers } from '../test-api/test-users/Users';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FeedbackIcon from '@mui/icons-material/Feedback';
@@ -11,24 +12,49 @@ import StoreIcon from '@mui/icons-material/Store';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import AnimatedTile from './utils/AnimatedTile';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import BlockIcon from '@mui/icons-material/Block';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import RestoreIcon from '@mui/icons-material/Restore';
+import UnpublishedIcon from '@mui/icons-material/Unpublished';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import { capitalizeFirstLetter } from './utils/utils';
+import CustomCard from './utils/CustomCard';
+import { useUserContext } from '../test-api/UserContext';
+import { USER_TYPES } from '../test-api/UserTypes';
+import CustomInput from './utils/CustomInput';
+import UpdateProductCard from './UpdateProductCard';
+
+
+function useEditMode(initialState = false) {
+  const [editMode, setEditMode] = useState(initialState);
+
+  const toggleEditMode = () => {
+    setEditMode(prevMode => !prevMode);
+  };
+
+  return [editMode, toggleEditMode];
+}
+
 
 function ProductView() {
 
   const { productID } = useParams();
   const navigate = useNavigate();
   const product = productList.find(product => product.id === Number(productID));
-  const [showSellerData, setShowSellerData] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const productOwner = ownersList.find(owner => owner.name === product.owner);
-  const ownerProductList = productList.filter(product => product.owner === productOwner.name && product.id !== Number(productID));
 
-  const showSellerDataHandler = (value) => {
-    if(!showSellerData){
-      return "*".repeat(value.length)
-    } else{
-      return value;
-    }
+  const [editMode, toggleEditMode] = useEditMode();
+
+  const { value: user } = useUserContext();
   
+  const seller = sellers.find(seller => product && product.owner === seller.name);
+
+  const sellerProductList = productList.filter(product => product.owner === seller.name && product.id !== Number(productID));
+
+
+  const sellerMapIcon = {
+    name: <StoreIcon/>,
+    rating: <StarRateIcon/>
   }
 
   const containerVariants = {
@@ -57,10 +83,40 @@ function ProductView() {
       },
     },
   };
-  
 
+  const renderAdminOptions = () => {
+    if(user === USER_TYPES.ADMIN){
+      return (
+       <AdminOptions seller={seller} product={product}/>
+      )
+
+    }
+    
+  }
+
+  const renderSellerOptions = () => {
+    if(user === USER_TYPES.SELLER){
+      return (
+        <SellerOptions 
+        toggleEditMode={toggleEditMode}
+        product={product}
+        seller={seller}
+        editMode={editMode}/>
+      )
+    }
+  }
+
+  const renderBuyerOptions = () => {
+    if (user === USER_TYPES.BUYER){
+      return (
+        <BuyerOptions seller={seller}/>
+      )
+    }
+  }
+  
   return (
       <motion.div 
+      key={productID}
       className='page'
       variants={containerVariants}
       initial="hidden"
@@ -90,21 +146,96 @@ function ProductView() {
             </div>
             <div className='standout-list-tile-invert'>
               <span> Condition : </span>
-              <span> {product.condition} </span>
+              <span> {capitalizeFirstLetter(product.condition)} </span>
             </div>
           </div>
           <div className='block-tile'/>
-          <div className='block-tile'>
-            <div className='block-tile' style={{marginBottom: '10px'}}>
-              <div className='standout-list-tile-invert-column'>
-                <h4> Contact Data </h4>
-                <div className='standout-list-tile'>
-                  <EmailIcon/>
-                  <span> {showSellerDataHandler(productOwner.contactEmail)} </span>
+           {renderBuyerOptions()}
+           {renderSellerOptions()}
+           {renderAdminOptions()}
+        </motion.div>
+        <motion.div className='page-content' style={{height: '80vh'}} variants={itemVariants}>
+          {/* left side */}
+          <div className='block-tile' style={{marginLeft: 0, flex: 2, maxHeight: '100%', flexDirection: 'column', maxWidth: '55vw'}}>
+            <div className='standout-list-tile-column'>
+              <h4> Description </h4>
+              <div className='standout-list-tile-invert'>
+                <p> {product.description} </p>
+              </div>
+            </div>
+            <div className='standout-list-tile-column' style={{flex: 1, maxHeight: '69%'}}>
+              <h4> Similar items from this vendor </h4>
+              <div className='divider-horizontal'/>
+              <div className='content-row' style={{maxWidth: '100%', flex: 1, maxHeight: '100%'}}>
+                {
+                  sellerProductList.length === 0 ? (
+                  <div className='center-message-container'> 
+                    <h4> Nothing to show :( </h4>
+
+                  </div>
+                  ) 
+                  : 
+                  (sellerProductList.map(product => (
+                    <CustomCard
+                    key={product.id}
+                    style={{maxHeight: '80%', marginLeft: '20px'}}
+                    linkRoute='/product/'
+                    element={product}
+                    propsToShow={['price']}
+                    propRoute={['id']}
+                    iconMap={{price: <AttachMoneyIcon/>}}
+                    />
+                  )))
+                }
+              
+              </div>
+              
+            </div>
+          </div>
+           {/* right side */}
+          <div className='block-tile' style={{flex: 1, maxHeight: '100%'}}>
+            <CustomCard
+            key={seller.id}
+            style={{width: '90%', height: '100%'}}
+            iconMap={sellerMapIcon}
+            element={seller}
+            propsToShow={['rating', 'description']}
+            propRoute={['id']}
+            linkRoute={['/seller/']}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+  )
+}
+
+
+
+function BuyerOptions({seller}) {
+
+  const [showSellerData, setShowSellerData] = useState(false);
+
+  const showSellerDataHandler = (value) => {
+      if(!showSellerData){
+        return "*".repeat(value.length)
+      } else{
+        return value;
+      }
+    
+  }
+
+  return (
+    <div className='block-tile'>
+       <div className='block-tile' style={{marginBottom: '10px'}}>
+        <div className='standout-list-tile-invert-column'>
+         <h4> Contact Data </h4>
+           <div className='standout-list-tile'>
+            <EmailIcon/>
+                  <span> {showSellerDataHandler(seller.contactEmail)} </span>
                 </div>
                 <div className='standout-list-tile'>
                   <PhoneIcon/>
-                  <span>{showSellerDataHandler(productOwner.contactPhone)}</span>
+                  <span>{showSellerDataHandler(seller.contactPhone)}</span>
                   
                 </div>
               </div>
@@ -120,66 +251,83 @@ function ProductView() {
               </AnimatedTile>
             </div>
           </div>
-
-        </motion.div>
-        <motion.div className='page-content' style={{height: '62vh'}} variants={itemVariants}>
-          {/* left side */}
-          <div className='block-tile' style={{marginLeft: 0, flex: 2}}>
-            <div className='standout-list-tile-column'>
-              <h4> Description </h4>
-              <div className='standout-list-tile-invert'>
-                <p> {product.description} </p>
-              </div>
-            </div>
-            <div className='standout-list-tile-column' style={{flex: 1}}>
-              <h4> Similar items from this vendor </h4>
-              <div className='divider-horizontal'/>
-              <div className='content-row' style={{maxWidth: '100%', height: 'auto'}}>
-                {
-                  ownerProductList.length === 0 ? (
-                  <div className='center-message-container'> 
-                    <h4> Nothing to show :( </h4>
-
-                  </div>
-                  ) 
-                  : 
-                  (ownerProductList.map(product => (
-                    <div className='content-card'>
-                      <img src={product.image}/>
-                  
-                      <div className='standout-list-tile'>
-                        <AttachMoneyIcon/>
-                        <span> {product.price} </span>
-                      </div>
-
-                    </div>
-                  )))
-                }
-              
-              </div>
-              
-            </div>
-          </div>
-           {/* right side */}
-          <div className='block-tile' style={{flex: 1}}>
-            <div className='standout-list-tile-column' style={{height: '100%', justifyContent: 'normal'}}>
-              <img src = {productOwner.profileImage}/>
-              <div className='standout-list-tile-invert' style={{backgroundColor: "#2d2a4c"}}>
-                <StoreIcon/>
-                <h4> {productOwner.name} </h4>
-              </div>
-              <div className='standout-list-tile-invert'>
-                <StarRateIcon/>
-                <span> {productOwner.rating} rating in PraiseTheSale</span>
-              </div>
-              <div className='standout-list-tile-invert'>
-                <p>{productOwner.description}</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
   )
 }
+
+function SellerOptions({seller, product, toggleEditMode, editMode}) {
+
+  const [ markedAsSold, setMarkedAsSold ] = useState(false);
+  return (
+    <div className='block-tile'>
+     <div className='block-tile'>
+      <AnimatedTile
+      layoutID={'update-product'}
+      onClick={toggleEditMode}
+      style={{cursor: 'pointer'}}
+      className='standout-list-tile-invert'>
+        <EditIcon style={{color: '#98FF98'}}/>
+        <h4> Edit Product </h4>
+      </AnimatedTile>
+       <AnimatePresence>
+        { editMode && (
+        <div className='profile-overlay' key='update-product'>
+          <UpdateProductCard 
+          product={product}
+          setIsAddingProduct={toggleEditMode} 
+          layoutID={'update-product'}/>
+         </div>
+        )
+        }
+        </AnimatePresence>
+     </div>
+     <div className='block-tile'>
+      <AnimatedTile
+      onClick={() => {setMarkedAsSold(!markedAsSold)}}
+      style={{cursor: 'pointer'}}
+      className='standout-list-tile-invert'>
+        {markedAsSold ? <RestoreIcon style={{color: '#98FF98'}}/> : <UnpublishedIcon style={{color: '#FF4C4C'}}/>}
+        <h4> {markedAsSold ? 'Relist' : 'Mark as Sold'} </h4>
+      </AnimatedTile>
+     </div>
+   </div>
+  )
+}
+
+function AdminOptions({seller, product}) {
+
+  const [ isSuspended, setAsSuspended ] = useState(false);
+  return (
+    <div className='block-tile'>
+          <div className='block-tile' style={{marginBottom: '10px'}}>
+            <div className='standout-list-tile-invert-column'>
+              <h4> Contact Data </h4>
+              <div className='standout-list-tile'>
+                <EmailIcon/>
+                  <span> {seller.contactEmail} </span>
+              </div>
+              <div className='standout-list-tile'>
+                <PhoneIcon/>
+                  <span>{seller.contactPhone}</span>
+                </div>
+              </div>
+            </div>
+            <div className='block-tile'>
+              <AnimatedTile
+              onClick={() => {setAsSuspended(!isSuspended)}}
+              style={{cursor: 'pointer'}}
+              className='standout-list-tile-invert'>
+                {isSuspended ? (<>
+                <PublishedWithChangesIcon style={{color: '#98FF98'}}/>
+                <h4> Unsuspend Product </h4>
+                </>) : (<>
+                <BlockIcon style={{color: '#FF4C4C'}}/>
+                <h4> Suspend Product </h4>
+                </>)}
+              </AnimatedTile>
+            </div>
+          </div>
+  )
+}
+
 
 export default ProductView

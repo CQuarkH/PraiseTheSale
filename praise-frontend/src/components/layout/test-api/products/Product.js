@@ -1,10 +1,12 @@
 import { faker } from '@faker-js/faker';
+import { amber } from '@mui/material/colors';
 
 export const productList = [
     {
       id: 1,
       name: "Wireless Headphones",
-      owner: "Lucas Martinez",
+      markedAsSold: false,
+      owner: "Lucy Gray",
       description: "High-quality over-ear wireless headphones with noise-cancellation feature. Provides an immersive audio experience.",
       price: 99.99,
       category: "electronics",
@@ -16,7 +18,8 @@ export const productList = [
     {
       id: 2,
       name: "Vintage Leather Backpack",
-      owner: "Emily Thompson",
+      markedAsSold: false,
+      owner: "Liam Johnson",
       description: "Stylish and durable leather backpack with multiple compartments. Perfect for both casual and formal occasions.",
       price: 79.50,
       category: "fashion",
@@ -27,7 +30,8 @@ export const productList = [
     {
       id: 3,
       name: "Organic Green Tea",
-      owner: "Michael Robinson",
+      markedAsSold: true,
+      owner: "Sophia Turner",
       description: "Refreshing and aromatic green tea made from the finest organic tea leaves. Rich in antioxidants.",
       price: 15.00,
       category: "food",
@@ -38,7 +42,7 @@ export const productList = [
     {
       id: 4,
       name: "Digital Camera",
-      owner : "Sophia Garcia",
+      owner : "Mike Green",
       description: "Compact digital camera with 20MP, 4K video recording, and optical zoom.",
       price: 250.00,
       category: "electronics",
@@ -49,7 +53,7 @@ export const productList = [
     {
       id: 5,
       name: "Running Shoes",
-      owner: "Benjamin Lee",
+      owner: "Mike Green",
       description: "Comfortable and breathable running shoes. Ideal for both professional athletes and casual runners.",
       price: 65.00,
       category: "fashion",
@@ -60,7 +64,7 @@ export const productList = [
     {
       id: 6,
       name: "Wooden Desk",
-      owner: "Olivia Johnson",
+      owner: "Sophia Turner",
       description: "Elegant wooden desk with a smooth finish. Comes with three drawers for storage.",
       price: 120.00,
       category: "furniture",
@@ -71,7 +75,7 @@ export const productList = [
     {
       id: 7,
       name: "Bluetooth Speaker",
-      owner: "Ethan Taylor",
+      owner: "Lucy Gray",
       description: "Portable Bluetooth speaker with deep bass and 10-hour battery life.",
       price: 45.00,
       category: "electronics",
@@ -82,7 +86,7 @@ export const productList = [
     {
       id: 8,
       name: "Yoga Mat",
-      owner : "Samuel Anderson",
+      owner : "Sophia Turner",
       description: "Non-slip yoga mat made of eco-friendly material. Perfect for all types of yoga and pilates.",
       price: 30.00,
       category: "sports",
@@ -93,7 +97,7 @@ export const productList = [
     {
       id: 9,
       name: "Classic Watch",
-      owner : "Ava Williams",
+      owner : "Lucy Gray",
       description: "Elegant classic watch with a leather strap and quartz movement.",
       price: 150.00,
       category: "fashion",
@@ -104,7 +108,7 @@ export const productList = [
     {
       id: 10,
       name: "Acoustic Guitar",
-      owner: "Mia White",
+      owner: "Liam Johnson",
       description: "Full-sized acoustic guitar with a rich sound and comfortable playability.",
       price: 200.00,
       category: "music",
@@ -113,20 +117,9 @@ export const productList = [
       image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.L4FFGSNRduoS8O9xeAwZEwHaLx%26pid%3DApi&f=1&ipt=a20d1d78ae2c8d2ed167f087153897c59027d11072893698bcc66252d83babfc&ipo=images"
     },
     {
-      id: 11,
-      name: "Wireless Headphones",
-      owner: "Lucas Martinez",
-      description: "High-quality over-ear wireless headphones with noise-cancellation feature. Provides an immersive audio experience.",
-      price: 99.99,
-      category: "electronics",
-      condition: "new",
-      creationTime: "15/09/2023 | 10:50",
-      image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.VUlxY7ZQGAfeICIal02cZAHaHa%26pid%3DApi&f=1&ipt=e038c03edd2c1b0d4dec3c54a5915600e1be105ec757d89fc288e296610fddb9&ipo=images"
-    },
-    {
       id: 12,
       name: "Bluetooth Speaker",
-      owner: "Lucas Martinez",
+      owner: "Liam Johnson",
       description: "Compact and portable Bluetooth speaker with clear and loud sound, suitable for indoor and outdoor use.",
       price: 49.99,
       category: "electronics",
@@ -137,14 +130,58 @@ export const productList = [
     {
       id: 13,
       name: "Smart Watch",
-      owner: "Lucas Martinez",
+      owner: "Liam Johnson",
       description: "Advanced smart watch with fitness tracking, heart rate monitor, and various other features.",
       price: 129.99,
       category: "electronics",
       condition: "new",
       creationTime: "17/09/2023 | 12:10",
       image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.8QZkDen2rYdEeA6R6YpsagHaHa%26pid%3DApi&f=1&ipt=eb00deaf73bbe979a50dabb0f3be8614af66752598878e6189e44a15063faa03&ipo=images"
-    }
+    },
+    {
+      id: 14,
+      name: "Handmade Bracelet",
+      owner: 'Lucy Gray',
+      description: "Beautifully crafted bracelet with natural stones and beads.",
+      price: 29.99,
+      category: "fashion",
+      condition: "new",
+      creationTime: '17/09/2023 | 12:10',
+      image: "https://images.pexels.com/photos/8100366/pexels-photo-8100366.jpeg?auto=compress&cs=tinysrgb&w=1600"
+    },
+    {
+      id: 15,
+      name: "Camping Tent",
+      owner: 'Mike Green',
+      description: "Durable and waterproof 4-person tent. Easy to set up and pack.",
+      price: 149.99,
+      category: "sports",
+      condition: "new",
+      creationTime: '17/09/2023 | 12:10',
+      image: "https://images.pexels.com/photos/1687845/pexels-photo-1687845.jpeg?auto=compress&cs=tinysrgb&w=1600"
+    },
+    {
+      id: 16,
+      owner: 'Sophia Turner',
+      name: "Pride and Prejudice",
+      description: "Jane Austen's timeless classic. A tale of love, society, and misunderstandings.",
+      price: 14.99,
+      category: "books",
+      condition: "new",
+      creationTime: '17/09/2023 | 12:10',
+      image: "https://images.pexels.com/photos/1666320/pexels-photo-1666320.jpeg?auto=compress&cs=tinysrgb&w=1600"
+    },
+    {
+      id: 17,
+      owner: 'Liam Johnson',
+      name: "Abstract Canvas Painting",
+      description: "A mesmerizing blend of colors that captures the essence of modern art. Perfect for living rooms and office spaces.",
+      price: 199.99,
+      category: "furniture",
+      condition: "new",
+      creationTime: '17/09/2023 | 12:10',
+      image: "https://images.pexels.com/photos/1269968/pexels-photo-1269968.jpeg?auto=compress&cs=tinysrgb&w=1600"
+    },
     
 ];
 
@@ -166,40 +203,68 @@ const getProductsByCategory = (category) => {
 
 export const categories = [
   {
-    label: "Music",
+    name: "Music",
     productList: getProductsByCategory('music'),
+    productLength: getProductsByCategory('music').length,
     profileImage: 'https://images.pexels.com/photos/1762578/pexels-photo-1762578.jpeg?auto=compress&cs=tinysrgb&w=1600',
     description : 'Rhythms and melodies that resonate with the soul.'
   },
   {
-    label : "Fashion",
+    name : "Fashion",
     productList: getProductsByCategory('fashion'),
+    productLength: getProductsByCategory('fashion').length,
     profileImage: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=1600',
     description : 'Trendsetting styles for every occasion.'
   },
   {
-    label : "Sports",
+    name : "Sports",
     productList: getProductsByCategory('sports'),
+    productLength: getProductsByCategory('sports').length,
     profileImage: 'https://media.istockphoto.com/id/465383082/photo/female-swimmer-at-the-swimming-pool.jpg?b=1&s=612x612&w=0&k=20&c=I4TM5zIDe-19EWq6OlzwZ1eqr8_tlEQ86SC-0eomEhU=',
     description : 'Gear and apparel for peak performance.'
   },
   {
-    label : "Electronics",
+    name : "Electronics",
     productList: getProductsByCategory('electronics'),
+    productLength: getProductsByCategory('electronics').length,
     profileImage: 'https://images.pexels.com/photos/343457/pexels-photo-343457.jpeg?auto=compress&cs=tinysrgb&w=1600',
     description : 'Innovative gadgets for the modern world.'
   },
   {
-    label : "Furniture",
+    name : "Furniture",
     productList: getProductsByCategory('furniture'),
+    productLength: getProductsByCategory('furniture').length,
     profileImage: 'https://images.pexels.com/photos/6580227/pexels-photo-6580227.jpeg?auto=compress&cs=tinysrgb&h=566.525&fit=crop&w=633.175&dpr=1',
     description : 'Crafted pieces to elevate every space.'
   },
   {
-    label : "Food",
+    name : "Food",
     productList: getProductsByCategory('food'),
+    productLength: getProductsByCategory('food').length,
     profileImage: 'https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1600',
     description : 'Delicious and nourishing essentials for every palate.'
-  } 
+  },
+  {
+    name : "Books",
+    productList: getProductsByCategory('books'),
+    productLength: getProductsByCategory('books').length,
+    profileImage: 'https://images.pexels.com/photos/4132936/pexels-photo-4132936.png?auto=compress&cs=tinysrgb&w=1600',
+    description : 'Diverse and enlightening literature for every reader, exploring a myriad of genres, themes, and worlds.'
+  }  
 ];
+
+export const categoriesValues = [
+  { value: 'electronics', label: 'Electronics'},
+  { value: 'music', label: 'Music'},
+  { value: 'fashion', label: 'Fashion'},
+  { value: 'sports', label: 'Sports'},
+  { value: 'furniture', label: 'Furniture'},
+  { value: 'food', label: 'Food'},
+  { value: 'books', label: 'Books'}
+]
+
+export const conditionValues = [
+  { value: 'new', label: 'New'},
+  { value: 'used', label: 'Used'}
+]
   

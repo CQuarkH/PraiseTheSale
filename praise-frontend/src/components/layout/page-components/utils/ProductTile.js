@@ -7,16 +7,18 @@ import PersonIcon from '@mui/icons-material/Person';
 import { USER_TYPES } from '../../test-api/UserTypes';
 import { Link } from 'react-router-dom';
 import AnimatedTile from './AnimatedTile';
+import { capitalizeFirstLetter } from "./utils";
 
-function ProductTile({element: product}) {
+function ProductTile({element: product, animate = true}) {
 
     const { value : user } = useUserContext();
 
-    const itemVariants = {
+    const itemVariants = animate ? {
       hidden: { y: 20, opacity: 0 },
       visible: { y: 0, opacity: 1 },
       exit: { y: 20, opacity: 0 } 
-    };
+    } : {};
+  
 
 
     return (
@@ -38,11 +40,11 @@ function ProductTile({element: product}) {
         <div className='block-tile' style={{justifyContent: 'center'}}>
           <div className='standout-list-tile'>
             <LocalOfferIcon/>
-            <span> {product.condition} </span>
+            <span> {capitalizeFirstLetter(product.condition)} </span>
          </div>
          <div className='standout-list-tile'>
             <LocalOfferIcon/>
-            <span> {product.category} </span>
+            <span> {capitalizeFirstLetter(product.category)} </span>
           </div>
           {
             user !== USER_TYPES.SELLER && (
@@ -53,7 +55,7 @@ function ProductTile({element: product}) {
             )
           }
         </div>
-        <div className='block-tile' style={{flex: 2}}>
+        <div className='block-tile hide-on-responsive' style={{flex: 2}}>
         <h4> Description </h4>
             <div className='standout-list-tile'>
               <p>{product.description}</p>

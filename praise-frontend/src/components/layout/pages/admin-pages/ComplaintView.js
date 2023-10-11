@@ -80,11 +80,17 @@ function ComplaintView() {
                     <div className='divider-horizontal'/>
                     <div className='content-row' style={{alignItems: 'center'}}>
                         <CustomCard
+                          style={{height: '40vh'}}
+                        linkRoute='/admin-users/'
+                        propRoute={['id']}
                         element={user}
                         propsToShow={['userType']}
                         iconMap={{userType: <TagIcon/>}}/>
                         <ArrowForwardIcon/>
                         <CustomCard
+                        style={{height: '40vh'}}
+                        linkRoute='/admin-users/'
+                        propRoute={['id']}
                         element={targetUser}
                         propsToShow={['userType']}
                         iconMap={{userType: <TagIcon/>}}/>
@@ -92,7 +98,7 @@ function ComplaintView() {
                 </div>
              </div>
                 <div className='block-tile'>
-                <div className='standout-list-tile-column'>
+                <div className='standout-list-tile-column' style={{height: '100%', marginBottom: '0'}}>
                     <h4> Product Involved </h4>
                     <div className='divider-horizontal'/>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>

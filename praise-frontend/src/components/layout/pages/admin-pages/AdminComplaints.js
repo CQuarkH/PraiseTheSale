@@ -6,6 +6,7 @@ import ListView from '../../page-components/utils/ListView';
 import SearchBarComponent from '../../page-components/utils/SearchBarComponent';
 import { complaints } from '../../test-api/complaints/Complaints';
 import { Link } from 'react-router-dom';
+import Header from '../../page-components/utils/Header';
 
 function AdminComplaints() {
 
@@ -21,22 +22,23 @@ function AdminComplaints() {
   const searchBy = useMemo(() => 
     ['subject', 'id', 'productID', 'targetID', 'userID']
   , []);
+
+  const searchBarComponent = useMemo(() => (
+    <SearchBarComponent 
+            elements={complaints} 
+            setFilteredElements={setFilteredComplaints} 
+            searchBy={searchBy}/>
+  ), [setFilteredComplaints])
   
 
 
   return (
     <div>
       <div className='page'>
-        <div className='page-header'>
-          <div>
-            <h2>Complaints</h2>
-            <span>Review and address user complaints promptly, upholding platform integrity and fostering user trust.</span>
-          </div>
-          <SearchBarComponent 
-            elements={complaints} 
-            setFilteredElements={setFilteredComplaints} 
-            searchBy={searchBy}/>
-      </div>
+        <Header
+        searchBar={searchBarComponent}
+        title='Complaints'
+        description='Review and address user complaints promptly, upholding platform integrity and fostering user trust.'/>
       <div className='page-content'>
       <ListView elements={filteredComplaints} ElementComponent={complaintComponent}/>
       <Filters elements={complaints} filterGroups={complaintFilterGroups} onFilterChange={setFilteredComplaints}/>
@@ -81,7 +83,7 @@ function complaintComponent({element: complaint}){
             <span>Target User ID : {complaint.targetID} </span>
           </div>
         </div>
-        <div className='block-tile' style={{flex: '2'}}>
+        <div className='block-tile hide-on-responsive' style={{flex: '2'}}>
           <h4> Complaint Description </h4>
           <div className='standout-list-tile'>
             <p> {complaint.context} </p>

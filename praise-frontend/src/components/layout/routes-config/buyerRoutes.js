@@ -28,10 +28,6 @@ export const buyerRoutes = [
       showInSidebar: true
     },
     {
-      path: '/buyer-sellers/:sellerID',
-      component: ProductsBySeller
-    },
-    {
       path: '/buyer-categories',
       component: BuyerCategories,
       title: 'Categories',
