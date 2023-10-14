@@ -372,10 +372,12 @@ textarea {
 
 .complaint-form-container{
   display: flex;
-  width: 100vw;
-  height: 100%;
-  flex-direction: row;
-  flex-wrap: wrap;
+  background-color: #1B1F31;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .complaint-input-row{
@@ -785,6 +787,11 @@ textarea {
   cursor: pointer;
   background-color: #6B77AE;
   color: #111111;
+}
+
+.date-input{
+  color: white;
+  background-color: #1B1F31;
 }
 
 @media (max-width: 1238px) {

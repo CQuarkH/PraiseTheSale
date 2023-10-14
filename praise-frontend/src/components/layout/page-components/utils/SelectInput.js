@@ -31,7 +31,7 @@ function SelectInput({ control, name, label, options, rules, defaultValue = "", 
                     vertical: "top",
                     horizontal: "left"
                   },
-                  getContentAnchorEl: null,
+                 
                   classes: { paper: 'menu-paper' } 
                 }}>
                 {options.map((option) => (

@@ -48,10 +48,10 @@ function SalesHistoryProduct({element: product}) {
     <AnimatePresence>
       <AnimatedTile
         whileHoverScale= {1.01}
-        key={product.id} 
+        layoutID={`sold-product-${product.id}`}
+        key={`sold-product-${product.id}`} 
         className='content-list-tile'
         variants={itemVariants}>
-       
         <img src={product.image} alt={product.name}></img>
         <div className='block-tile'>
           <h3> {product.name} </h3>

@@ -13,7 +13,10 @@ function BuyerSellers() {
   const [filteredSellers, setFilteredSellers] = useState(sellers);
 
   const searchBarComponent = useMemo(() => (
-    <SearchBarComponent elements={sellers} setFilteredElements={setFilteredSellers}/>
+    <SearchBarComponent 
+    searchBy={['name', 'id']}
+    elements={sellers} 
+    setFilteredElements={setFilteredSellers}/>
   ), [setFilteredSellers]);
 
   return (
@@ -51,6 +54,7 @@ function SellerComponent({element: seller}) {
   return (
     <AnimatePresence>
         <CustomCard
+        layoutID={`seller-${seller.id}`}
         element={seller}
         propsToShow={['rating', 'productLength']}
         propsLabel= {sellerPropsLabel}

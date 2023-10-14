@@ -135,7 +135,12 @@ function UpdateProductCard({setIsAddingProduct, product, layoutID}) {
   
             </div>
             <div className='block-tile' style={{flex: 1, height: '100%'}}>
-            <ImageUploaderButton control={control} name="productImage" rules={IMAGE_RULES} error={errors.productImage} />
+            <ImageUploaderButton 
+            control={control} 
+            name="productImage" 
+            rules={IMAGE_RULES} 
+            error={errors.productImage} 
+            defaultValue={product?.image}/>
 
             </div>
           </div>

@@ -3,8 +3,10 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import CustomInput from '../page-components/utils/CustomInput';
 import TextButton from '../page-components/utils/TextButton';
+import CloseIcon from '@mui/icons-material/Close';
+import AnimatedButton from './utils/AnimatedButton';
 
-function ComplaintForm({ formattedComplaintData }) {
+function ComplaintForm({ formattedComplaintData, onClose, layoutID }) {
   const { control, handleSubmit, formState: { errors } } = useForm();
 
   const BASE_RULES = {
@@ -59,8 +61,30 @@ function ComplaintForm({ formattedComplaintData }) {
   };
 
   return (
-    <motion.div className='complaint-form-container' style={{height: '50vh'}}>
-      <form style={{height: '100%', width: '100%'}}>
+    <motion.div 
+    layoutId={layoutID}
+    className='complaint-form-container' 
+    style={{height: '70vh', width: '60vw'}}>
+      <div className='block-tile ml-0'>
+       <div className='flex-aligned-container'>
+       <AnimatedButton
+       Icon={<CloseIcon/>}
+       onClick={onClose}
+       />
+
+       <span style={{fontSize: '18px', fontWeight: 'bold'}}>
+        Create Complaint
+       </span>
+        
+       <TextButton 
+            onClick={handleSubmit(onSubmit)}
+            text='Send'
+            style={{maxWidth: '10%', height: '50px', backgroundColor: '#98FF98'}}
+          />
+       </div>
+
+      </div>
+      <form style={{height: '90%', width: '100%'}}>
         <motion.div 
           className='complaint-input-row'
           variants={containerVariants}
@@ -82,8 +106,9 @@ function ComplaintForm({ formattedComplaintData }) {
             />
           ))}
         </motion.div>
+        <div className='block-tile ml-0' style={{flex: 2, height: '90%'}}>
         <CustomInput
-          style={{height: '100%'}}
+          style={{height: '70%'}}
           name={formattedComplaintData.inputBlock.name}
           control={control}
           placeholder={formattedComplaintData.inputBlock.placeholder}
@@ -94,12 +119,6 @@ function ComplaintForm({ formattedComplaintData }) {
           error={errors[formattedComplaintData.inputBlock.name]}
           variants={itemVariants}
         />
-        <div className='complaint-send-button-container'>
-          <TextButton 
-            onClick={handleSubmit(onSubmit)}
-            text='Send'
-            style={{maxWidth: '10%', backgroundColor: '#98FF98'}}
-          />
         </div>
       </form>
     </motion.div>

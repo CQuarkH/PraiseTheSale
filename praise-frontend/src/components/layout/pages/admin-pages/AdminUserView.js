@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { users, logs } from '../../test-api/test-users/Users';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -29,17 +29,53 @@ function AdminUserView() {
   const userLogs = useMemo(() => 
   logs.filter(log => log.userID === user.id), [logs, user.id]);
 
+
   const searchBy = useMemo(() => 
     ['logType', 'id', 'dateTime']
   , [])
 
   const [ filteredLogs, setFilteredLogs ] = useState(userLogs);
 
+  const containerVariants = {
+    hidden: { opacity: 1, scale: 0.7 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1, 
+        duration: 0.07
+      },
+    },
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 500,
+        damping: 30,
+        duration: 0.3
+      },
+    },
+  };
+
+
+
+
   
 
   return (
-    <div className='page'>
-        <div className='page-header' style={{maxHeight: "35vh"}}>
+    <motion.div 
+    initial="hidden"
+    animate="visible"
+    className='page' 
+    variants={containerVariants}>
+        <motion.div 
+        className='page-header' style={{maxHeight: "35vh"}} variants={itemVariants}>
             <div className='block-tile' style={{marginLeft: '0'}}>
             <div className='button-image-container'>
               <img src={user.profileImage}/>
@@ -79,7 +115,8 @@ function AdminUserView() {
                 </AnimatedTile>
                 {
                     user.userType === 'seller' && (
-                        <AnimatedTile className="standout-list-tile-invert">
+                        <AnimatedTile className="standout-list-tile-invert"
+                        onClick={() => navigate(`/seller/${user.id}`)}>
                         <StoreIcon style={{color:'#98FF98'}}/>
                          <h4> View Products </h4>
                         </AnimatedTile>
@@ -88,8 +125,9 @@ function AdminUserView() {
 
             </div>
         
-        </div>
-        <div className='page-content'>
+        </motion.div>
+        <motion.div 
+        className='page-content' variants={itemVariants}>
             {/* description */}
             <div className='block-tile' style={{marginLeft: 0, height: '50vh'}}>
                 <div className='standout-list-tile-column' style={{maxHeight: '40%'}}>
@@ -135,8 +173,8 @@ function AdminUserView() {
             </div>
 
 
-        </div>
-    </div>
+        </motion.div>
+    </motion.div>
   )
 }
 
@@ -150,33 +188,38 @@ function LogTile({element: log}) {
 
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
 
+
+ 
+
   return (
-    
     <>
     <AnimatedTile 
-    onClick={() => setIsDetailsVisible(true)}
-    className='standout-list-tile-invert'
-    style={{cursor: 'pointer'}}
-    whileHoverScale= {1.01}
-    key={log.id} 
-    layoutId={log.id}
-    variants={itemVariants}
-    >
+     layout = {true}
+     onClick={() => setIsDetailsVisible(true)}
+     className='standout-list-tile-invert'
+     style={{cursor: 'pointer'}}
+     whileHoverScale= {1.01}
+     key={`log-${log.id}`} 
+     layoutID={`log-${log.id}`}
+     variants={itemVariants}>
      <div className='standout-list-tile-variant'>
         <PersonOutlineIcon style={{marginRight: '10px'}}/>
         <span> {log.logType} </span>
-    </div>
-    <div className='standout-list-tile-variant'>
+     </div>
+     <div className='standout-list-tile-variant'>
         <CalendarMonthIcon style={{marginRight: '10px'}}/>
         <span> {log.dateTime} </span>
-    </div>
-    <KeyboardReturnIcon style={{color:'#98FF98'}}/>
-    </AnimatedTile>
-    <AnimatePresence>
+     </div>
+     <KeyboardReturnIcon style={{color:'#98FF98'}}/>
+     </AnimatedTile>
+     <AnimatePresence mode="sync">
         {
             isDetailsVisible && (
                 <div className='profile-overlay'>
-                <motion.div className='log-card-container' layoutId={log.id}>
+                <motion.div 
+                 key={`log-${log.id}`}
+                 className='log-card-container' 
+                 layoutId={`log-${log.id}`}>
                     <div className='log-card-header'>
                      <div className='flex-aligned-container'>
                         <div className='flex-aligned-container'>

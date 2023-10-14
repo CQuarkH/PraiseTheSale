@@ -7,6 +7,15 @@ import StoreIcon from '@mui/icons-material/Store';
 import AnimatedButton from '../../page-components/utils/AnimatedButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+
+const EMAIL_RULES = {
+  required: "Email is required",
+  pattern: {
+    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+    message: "Invalid email format"
+  }
+};
+
 function ForgotPassword() {
 
   const { control, handleSubmit, formState: { errors } } = useForm();
@@ -50,7 +59,8 @@ function ForgotPassword() {
                   label="Email"
                   placeholder="Enter your email"
                   type="email"
-                  rules={{ required: "Email is required!" }}
+                  rules={EMAIL_RULES}
+                  error={errors.email}
                 />
                 <TextButton
                 text='Send Email'

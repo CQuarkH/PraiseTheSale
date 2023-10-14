@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import AnimatedTile from './AnimatedTile';
 
-function ImageUploaderButton({ control, name, rules, error }) {
+function ImageUploaderButton({ control, name, rules, error, defaultValue }) {
   const [image, setImage] = useState(null);
 
   const handleImageChange = (e) => {
@@ -12,13 +12,14 @@ function ImageUploaderButton({ control, name, rules, error }) {
     }
   };
 
+
   return (
     <div className='standout-list-tile-invert-column' style={{ height: '100%' }}>
       <h4> Product Image {error && <span style={{ color: 'red', marginLeft: '10px' }}>({error.message})</span>}</h4>
       <Controller
         name={name}
         control={control}
-        defaultValue=""
+        defaultValue={defaultValue}
         rules={rules}
         render={({ field }) => (
           <>
@@ -32,8 +33,11 @@ function ImageUploaderButton({ control, name, rules, error }) {
               }}
               style={{ display: 'none', width: '100%' }}
             />
-            {image ? (
-              <img src={image} alt="Selected" className='selected-image' />
+            {(defaultValue || image) ? (
+              <img src={image || defaultValue} 
+              style={{objectFit: 'cover'}}
+              alt="Selected" 
+              className='selected-image' />
             ) : (
               <div className='centered-content'>
                 <h5> Not selected yet </h5>

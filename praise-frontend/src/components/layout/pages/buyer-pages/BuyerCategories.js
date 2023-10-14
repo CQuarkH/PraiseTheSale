@@ -26,7 +26,9 @@ function BuyerCategories() {
       description="Explore a diverse range of products by browsing through our categories. Find exactly what you're looking for with ease."
       searchBar={searchBarComponent}/>
       <div className='page-content'>
-        <ListView elements={filteredCategories} ElementComponent={CategoryComponent} grid={true}/>
+        <ListView 
+        key='buyer-categories'
+        elements={filteredCategories} ElementComponent={CategoryComponent} grid={true}/>
       </div>
      
       </div>

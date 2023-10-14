@@ -9,20 +9,28 @@ import { buyerRoutes } from '../routes-config/buyerRoutes';
 import ProfileButton from './profile/ProfileButton';
 import StoreIcon from '@mui/icons-material/Store';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Sidebar() {
   const { value: user, setValue: setUser } = useUserContext();
-  const [linkSelected, setLinkSelected] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+
   let routesToShow;
 
   const changeUserType = () => {
     if(user === USER_TYPES.BUYER) {
       setUser(USER_TYPES.SELLER);
+      navigate('/seller-home');
     } else if(user === USER_TYPES.SELLER) {
       setUser(USER_TYPES.ADMIN);
+      navigate('/admin-home')
     } else if(user === USER_TYPES.ADMIN) {
       setUser(USER_TYPES.BUYER);
+      navigate('/buyer-home');
     }
   }
 
@@ -47,10 +55,10 @@ function Sidebar() {
       <div className='sidebar-options'>
       {routesToShow.map(route => (
         route.showInSidebar && (
-          <motion.div onClick={() => { setLinkSelected(route); setIsDrawerOpen(false); }}>
+          <motion.div onClick={() => {setIsDrawerOpen(false)}}>
             <Link to={route.path} 
             key={route.path} 
-            className= {(route === linkSelected) ? 'sidebar-option active' : 'sidebar-option'}>
+            className= {(route.path === location.pathname) ? 'sidebar-option active' : 'sidebar-option'}>
             {route.icon}
             <span>{route.title}</span>
             </Link>

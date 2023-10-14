@@ -28,10 +28,11 @@ function ProfileButton() {
   return (
     <>
       <motion.div
+        layoutId='profile-button'
         onClick={() => setPressed(!isPressed)}
         className="sidebar-profile-button"
-        whileTap={{ scale: "0.99" }}
-        whileHover={{ scale: "1.01" }}
+        whileTap={{ scale: 0.99 }}
+        whileHover={{ scale: 1.01 }}
       >
         <AccountBoxIcon fontSize="large" style={{ color: "#98FF98" }} />
         <div className="sidebar-profile-button-text">
@@ -40,10 +41,10 @@ function ProfileButton() {
         </div>
       </motion.div>
 
-      <AnimatePresence>
+      <AnimatePresence mode='wait'>
         {isPressed && (
           <div className="profile-overlay">
-             <ProfileCard user={user} closeCard={closeCard}/>
+             <ProfileCard key={Date.now()} user={user} closeCard={closeCard} layoutID='profile-button'/>
           </div>
         )}
       </AnimatePresence>

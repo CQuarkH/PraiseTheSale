@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
 import { USER_TYPES } from '../../test-api/UserTypes';
@@ -11,41 +11,59 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import PhoneIcon from '@mui/icons-material/Phone';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import EditIcon from '@mui/icons-material/Edit';
+import Edit from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import AnimatedButton from '../../page-components/utils/AnimatedButton';
+import CustomInput from '../../page-components/utils/CustomInput';
+import UpdateProfileCard from './UpdateProfileCard';
 
-function ProfileCard({user, closeCard}) {
+function ProfileCard({user, closeCard, layoutID}) {
 
-  const cardVariants = {
-        hidden: { opacity: 0, scale: 0.5, y: "90%", x: "-200%" },
-        visible: {
-          opacity: 1,
-          scale: 1,
-          y: "0%",
-          x: "0%",
-          transition: { type: "spring", stiffness: 260, damping: 20 },
-        },
-        exit: { opacity: 0, scale: 0.5, y: "90%", x: "-200%", transition: { duration: 0.5 } },
-  };
-      
+  const [ isUpdating, setIsUpdating ] = useState(false);
+  
+  const toggleUpdating = () => {
+    setIsUpdating(!isUpdating);
+  }
+
 
   return (
     <motion.div 
+    layoutId={layoutID}
     className='profile-card'
     initial="hidden"
     animate="visible"
-    exit="hidden"
-    variants={cardVariants}>
+    exit="hidden">
+        {
+            isUpdating 
+            ? 
+            <UpdateProfileCard user={user} toggleUpdating={toggleUpdating}/> 
+            :
+            <ViewProfileCard user={user} closeCard={() => closeCard()} toggleUpdating={toggleUpdating}/>
+        }
+    </motion.div>
+  )
+}
+
+function ViewProfileCard({user, closeCard, toggleUpdating}){
+
+    return(
+        <>
         <div className='card-options-container'>
-        <motion.div 
-        whileHover={{scale: '1.13'}}
-        whileTap={{scale: '0.9'}}
-        onClick={() => closeCard()}>
-            <CloseIcon style={{ color: "#FFFFFF" }} />
-         </motion.div>
-         <motion.div
-         whileHover={{scale: '1.13'}}
-         whileTap={{scale: '0.9'}}>
-            <PersonRemoveIcon style={{color: '#FF4C4C'}}/>
-         </motion.div>
+        <AnimatedButton
+        Icon={<CloseIcon style={{ color: "#FFFFFF" }} />}
+        onClick={() => closeCard()}/>
+
+        <div className='flex-aligned-container'>
+        <AnimatedButton
+        margin={10}
+        Icon={<PersonRemoveIcon style={{color: '#FF4C4C'}}/>}/>
+
+        <AnimatedButton
+        Icon={<EditIcon/>}
+        onClick={toggleUpdating}/>
+        
+        </div>
         </div>
         <div className='card-content-container'>
          <div className='left-side-card'>
@@ -122,10 +140,9 @@ function ProfileCard({user, closeCard}) {
             
          </div>
         </div>
-    </motion.div>
-  )
+        </>
+    )
 }
-
 
 
 

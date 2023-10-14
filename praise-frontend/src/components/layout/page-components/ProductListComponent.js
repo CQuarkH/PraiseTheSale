@@ -39,7 +39,7 @@ function ProductListComponent({
       ]
     }), []);
 
-    const searchBy = useMemo(() => searchByList ?? ['name', 'id', 'category'], []);
+    const searchBy = useMemo(() => searchByList ?? ['name', 'id'], []);
 
     const searchBarComponent = useMemo(() => (
       <SearchBarComponent 
@@ -57,8 +57,12 @@ function ProductListComponent({
       customHeader={customPageHeader}
       searchBar={searchBarComponent}/>
       <div className='page-content'>
-        <ListView elements={filteredProducts} ElementComponent={ProductTile}/>
-        <Filters elements={products} filterGroups={filters} onFilterChange={setFilteredProducts}/>
+        <ListView 
+        key='product-listview'
+        elements={filteredProducts} ElementComponent={ProductTile}/>
+        <Filters 
+        key='product-list-component-filters'
+        elements={products} filterGroups={filters} onFilterChange={setFilteredProducts}/>
         {
           button && (
            button

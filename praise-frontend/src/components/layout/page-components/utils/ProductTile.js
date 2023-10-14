@@ -5,7 +5,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonIcon from '@mui/icons-material/Person';
 import { USER_TYPES } from '../../test-api/UserTypes';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import AnimatedTile from './AnimatedTile';
 import { capitalizeFirstLetter } from "./utils";
 
@@ -18,18 +18,21 @@ function ProductTile({element: product, animate = true}) {
       visible: { y: 0, opacity: 1 },
       exit: { y: 20, opacity: 0 } 
     } : {};
-  
 
-
+    
+   
     return (
-      <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit'}}>
+      <Link to={`/product/${product.id}`} 
+      style={{ textDecoration: 'none', color: 'inherit'}}>
       <AnimatePresence>
         <AnimatedTile
+         layoutID={`product-${product.id}`}
          whileHoverScale= {1.01}
-         key={product.id} 
+         key={`product-${product.id}`} 
          className='content-list-tile'
          variants={itemVariants}>
-          <img src={product.image} alt={product.name}></img>
+          <motion.img 
+          src={product.image} alt={product.name}></motion.img>
           <div className='block-tile'>
           <h3> {product.name} </h3>
           <div className='standout-list-tile'>

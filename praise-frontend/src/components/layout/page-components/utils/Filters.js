@@ -1,9 +1,16 @@
 import React, {useState, useEffect, memo, useCallback} from 'react'
 import { motion } from 'framer-motion';
+import { formatProp } from './utils';
 
-function Filters({ elements, filterGroups, onFilterChange }) {
+function Filters({ elements, filterGroups, onFilterChange, sortByDateDescending = false }) {
 
   const [activeFilters, setActiveFilters] = useState([]);
+
+  const handleSortByDateDescending = (a, b) => {
+    const dateA = new Date(a.dateTime);
+    const dateB = new Date(b.dateTime);
+    return dateB - dateA;
+  }
   
 
   useEffect(() => {
@@ -11,6 +18,10 @@ function Filters({ elements, filterGroups, onFilterChange }) {
 
     for (let filterFn of activeFilters) {
       results = results.filter(filterFn);
+    }
+    
+    if(sortByDateDescending){
+      results.sort(handleSortByDateDescending); 
     }
 
     onFilterChange(results);
@@ -32,7 +43,7 @@ function Filters({ elements, filterGroups, onFilterChange }) {
         <h3>Filters</h3>
         {Object.entries(filterGroups).map(([group, filters]) => (
         <div key={group} className= 'page-filters-group'>
-          <h4>{group}</h4>
+          <h4>{formatProp(group)}</h4>
           {filters.map(filterOption => (
             <div className='page-filters-item'>
             <motion.input 

@@ -27,6 +27,7 @@ function AdminUsers() {
 
   const searchBarComponent = useMemo(() => (
     <SearchBarComponent 
+      searchBy={['name', 'id']}
       elements={activeTab === 'sellers' ? sellers : buyers} 
       setFilteredElements={setFilteredUsers}
     />
@@ -80,6 +81,8 @@ function BuyerComponent({ element: buyer }){
   return (
     <AnimatePresence>
       <CustomCard
+      key={`buyer-${buyer.id}`}
+      layoutID={`buyer-${buyer.id}`}
       element={buyer}
       propsToShow={['description']}
       propFormat={{description: 'p'}}
@@ -106,6 +109,8 @@ function SellerComponent({ element: seller}){
   return (
     <AnimatePresence>
       <CustomCard
+      layoutID={`seller-${seller.id}`}
+      key={`seller-${seller.id}`}
       element={seller}
       propsToShow={['rating', 'productLength']}
       propsLabel= {sellerPropsLabel}

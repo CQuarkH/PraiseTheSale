@@ -8,7 +8,6 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import ProductView from '../page-components/ProductView';
 import { commonRoutes } from './commonRoutes';
-import ComplaintView from '../pages/admin-pages/ComplaintView';
 import AdminUserView from '../pages/admin-pages/AdminUserView';
 
 
@@ -51,9 +50,5 @@ export const adminRoutes = [
       icon: <FeedbackIcon className='sidebar-option-icon'/>,
       showInSidebar: true
     },
-    {
-      path: '/admin-complaints/:complaintID',
-      component: ComplaintView
-    }
     
   ];

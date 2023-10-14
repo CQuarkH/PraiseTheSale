@@ -24,6 +24,7 @@ import { useUserContext } from '../test-api/UserContext';
 import { USER_TYPES } from '../test-api/UserTypes';
 import CustomInput from './utils/CustomInput';
 import UpdateProductCard from './UpdateProductCard';
+import { useLocation } from 'react-router-dom';
 
 
 function useEditMode(initialState = false) {
@@ -126,7 +127,9 @@ function ProductView() {
         className='page-header' style={{maxHeight: "35vh"}}>
           <div className='block-tile' style={{marginLeft: '0'}}>
             <div className='button-image-container'>
-              <img src={product.image}/>
+              <motion.img 
+             
+              src={product.image}/>
               <AnimatedTile 
               className='button-image-back' 
               onClick={() => navigate(-1)}>

@@ -10,7 +10,8 @@ function CustomCard({
   iconMap,
   linkRoute,
   propRoute,
-  style
+  style,
+  layoutID
 }) {
 
   const itemVariants = {
@@ -20,7 +21,7 @@ function CustomCard({
   };
 
   return (
-    <AnimatedTile className='content-card' style={style} variants={itemVariants}>
+    <AnimatedTile className='content-card' style={style} variants={itemVariants} layoutID={layoutID}>
       {
         linkRoute ?
           <Link to={`${linkRoute}${element[propRoute]}`}
