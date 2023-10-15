@@ -1,0 +1,15 @@
+package com.example.praisebackend.models;
+
+public enum LogType {
+    REQUEST_SELLER_DATA,
+    USER_BANNED,
+    CHANGE_PASSWORD,
+    PRODUCT_ADDED,
+    PRODUCT_SUSPENDED,
+    PRODUCT_DELETED,
+    DELETE_EMAIL,
+    DELETE_COMPLAINT,
+    RESOLVE_COMPLAINT,
+    UPDATE_COMPLAINT,
+    MARK_AS_SOLD
+}
