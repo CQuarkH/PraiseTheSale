@@ -125,7 +125,7 @@ function ComplaintView() {
                 <div className='standout-list-tile-column'>
                     <h4> Involved Users </h4>
                     <div className='divider-horizontal'/>
-                    <div className='content-row' style={{alignItems: 'center'}}>
+                    <div className='content-row' style={{alignItems: 'center', overflowX: 'hidden'}}>
                         <CustomCard
                           style={{height: '40vh'}}
                         linkRoute={currentUser === USER_TYPES.ADMIN ? '/admin-users/' : null}

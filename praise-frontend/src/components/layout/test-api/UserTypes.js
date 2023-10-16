@@ -1,25 +1,29 @@
+import { productList } from "../test-api/products/Product";
+const productsBySeller  = (owner) => productList.filter(product => product.owner === owner);
+
 const buyer = {
-    id : 1,
-    name : 'John Doe',
-    email : 'johndoe@domain.com',
-    description : "Software engineer by day, tech enthusiast by night. I have a penchant for sci-fi books and a newfound love for chess. Always on the lookout for the best deals and unique items on the platform. If you've got product recommendations, send them my way! 🛍️🚀",
-    profileImage : 'https://images.pexels.com/photos/5384445/pexels-photo-5384445.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    creationTime : '01/01/2025 | 10:50',
-    
+    id: 1,
+    userType: 'buyer',
+    name: 'John Doe',
+    email: 'johndoe@domain.com',
+    description: "Software engineer by day, tech enthusiast by night. I have a penchant for sci-fi books and a newfound love for chess. Always on the lookout for the best deals and unique items on the platform. If you've got product recommendations, send them my way! 🛍️🚀",
+    profileImage: 'https://images.pexels.com/photos/5378700/pexels-photo-5378700.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    creationTime: '01/01/2025 | 10:50',
 }
 
 const seller = {
-    id : 2,
-    name : 'John Smith',
-    rating: '4.5',
-    products: 8,
-    email : 'johnsmith@domain.com',
-    contactEmail: 'contactjohnsmith@domain.com',
-    contactPhone: '+123456789',
-    description : "Specializing in fitness equipment and nutritional supplements. Certified personal trainer and nutritionist. I'm here to help you achieve your health and fitness goals. If you're looking for quality products or just some dietary advice, don't hesitate to reach out! 🏋️‍♂️💪",
-    profileImage : 'https://images.pexels.com/photos/5490276/pexels-photo-5490276.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    creationTime : '01/02/2025 | 11:22',
-
+    id: 4,
+    userType: 'seller',
+    name: 'Lucy Gray',
+    email: 'lucygray@domain.com',
+    description: "Passionate about handmade crafts and unique jewelry. Each piece in my collection is crafted with love and care. If you're looking for something special, you're in the right place! 💍🎨",
+    profileImage: 'https://images.pexels.com/photos/4420634/pexels-photo-4420634.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    creationTime: '04/02/2025 | 14:05',
+    contactPhone: '124-567-8901',
+    contactEmail: 'lucygray@domain.com',
+    rating: 4.7,
+    productList: productsBySeller('Lucy Gray'),
+    productLength: productsBySeller('Lucy Gray').length
 }
  
 const admin = {

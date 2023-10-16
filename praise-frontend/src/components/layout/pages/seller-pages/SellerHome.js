@@ -3,11 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProductListComponent from '../../page-components/ProductListComponent'
 import FloatingActionButton from '../../page-components/utils/FloatingActionButton';
 import AddIcon from '@mui/icons-material/Add';
+import { productList } from '../../test-api/products/Product';
 import UpdateProductCard from '../../page-components/UpdateProductCard';
+import { useUserContext } from '../../test-api/UserContext';
 
 function SellerHome() {
 
+  const { value: user } = useUserContext();
+
   const [ isAddingProduct, setIsAddingProduct ] = useState(false);
+
+  const sellerProducts = productList.filter(product => product.owner === user.name);
 
   const addButton = () => (
     <>
@@ -27,6 +33,7 @@ function SellerHome() {
   
   return (
     <ProductListComponent 
+    customElements={sellerProducts}
     title='Home' 
     button= {addButton()}
     description='Manage your product listings and optimize descriptions to enhance visibility and boost sales.'/>

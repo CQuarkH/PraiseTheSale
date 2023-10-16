@@ -7,8 +7,8 @@ export const complaints = [
       dateTime: "2023-09-10 14:30",
       status: "pending",
       resolutionDetails: "notResolved",
-      productID: 2,
-      targetID: 3
+      productID: 1,
+      targetID: 4
     },
     {
       id: 2,
@@ -18,19 +18,19 @@ export const complaints = [
       dateTime: "2023-09-11 10:15",
       status: "resolved",
       resolutionDetails: "Seller was warned and apologized.",
-      productID: 4,
-      targetID: 1
+      productID: 2,
+      targetID: 7
     },
     {
       id: 3,
-      userID: 4,
+      userID: 2,
       subject: "Misleading Product Description",
       context: "The product I received looks nothing like what was shown in the pictures. The description mentioned specific features that are absent in the product I got.",
       dateTime: "2023-09-12 16:45",
       status: "pending",
       resolutionDetails: "notResolved",
-      productID: 7,
-      targetID: 2
+      productID: 4,
+      targetID: 5
     },
     {
       id: 4,
@@ -40,19 +40,19 @@ export const complaints = [
       dateTime: "2023-09-13 09:30",
       status: "resolved",
       resolutionDetails: "Refund was issued to the buyer.",
-      productID: 3,
+      productID: 14,
       targetID: 4
     },
     {
       id: 5,
-      userID: 5,
+      userID: 3,
       subject: "Missing Parts in the Package",
       context: "The product arrived, but it was missing essential components. I can't use it without those parts. This is very inconvenient.",
       dateTime: "2023-09-14 11:20",
       status: "pending",
       resolutionDetails: "notResolved",
-      productID: 2,
-      targetID: 1
+      productID: 10,
+      targetID: 7
     },
     {
       id: 6,
@@ -62,8 +62,8 @@ export const complaints = [
       dateTime: "2023-09-15 15:10",
       status: "resolved",
       resolutionDetails: "Replacement was sent to the buyer.",
-      productID: 6,
-      targetID: 3
+      productID: 9,
+      targetID: 4
     },
     {
       id: 7,
@@ -73,19 +73,19 @@ export const complaints = [
       dateTime: "2023-09-16 12:40",
       status: "pending",
       resolutionDetails: "notResolved",
-      productID: 2,
-      targetID: 2
+      productID: 13,
+      targetID: 7
     },
     {
       id: 8,
-      userID: 3,
+      userID: 2,
       subject: "Questionable Authenticity",
       context: "I have doubts about the authenticity of the product. It lacks certain markings and feels different from the genuine ones I've seen.",
       dateTime: "2023-09-17 14:50",
       status: "resolved",
       resolutionDetails: "Seller provided proof of authenticity.",
-      productID: 4,
-      targetID: 1
+      productID: 15,
+      targetID: 5
     },
     {
       id: 9,
@@ -95,8 +95,8 @@ export const complaints = [
       dateTime: "2023-09-18 10:10",
       status: "pending",
       resolutionDetails: "notResolved",
-      productID: 2,
-      targetID: 3
+      productID: 5,
+      targetID: 5
     },
     {
       id: 10,
@@ -106,7 +106,7 @@ export const complaints = [
       dateTime: "2023-09-19 13:25",
       status: "resolved",
       resolutionDetails: "Seller offered a size exchange.",
-      productID: 2,
+      productID: 7,
       targetID: 4
     }
   ];

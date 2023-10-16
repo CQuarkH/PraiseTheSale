@@ -4,7 +4,7 @@ import Lottie from "lottie-react";
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 
-function ListView({ elements, ElementComponent, grid = false }) {
+function ListView({ elements, ElementComponent, grid = false}) {
 
   const location = useLocation();
   const [animationData, setAnimationData] = useState(null);
