@@ -1,4 +1,4 @@
-package com.example.praisebackend.models;
+package com.example.praisebackend.models.user;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

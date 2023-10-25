@@ -1,4 +1,4 @@
-package com.example.praisebackend.models;
+package com.example.praisebackend.models.complaint;
 
 public enum ComplaintStatus {
     PENDING,

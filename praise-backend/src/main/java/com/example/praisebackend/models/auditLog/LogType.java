@@ -1,4 +1,4 @@
-package com.example.praisebackend.models;
+package com.example.praisebackend.models.auditLog;
 
 public enum LogType {
     REQUEST_SELLER_DATA,

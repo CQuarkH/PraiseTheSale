@@ -1,4 +1,4 @@
-package com.example.praisebackend.models;
+package com.example.praisebackend.models.complaint;
 
 import java.time.LocalDateTime;
 
@@ -8,21 +8,18 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
 @Entity
-public class AuditLog {
+public class Complaint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Enumerated(EnumType.STRING)
-    private LogType actionType;
+    private String context;
     private LocalDateTime dateTime;
-    private String description;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Enumerated(EnumType.STRING)
+    private ComplaintStatus status;
+    private Long productId;
+    private Long targetUserId;
 }

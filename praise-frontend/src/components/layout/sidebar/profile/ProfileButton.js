@@ -41,13 +41,12 @@ function ProfileButton() {
         </div>
       </motion.div>
 
-      <AnimatePresence mode='wait'>
         {isPressed && (
           <div className="profile-overlay">
              <ProfileCard key={Date.now()} user={user} closeCard={closeCard} layoutID='profile-button'/>
           </div>
         )}
-      </AnimatePresence>
+      
     </>
   );
   

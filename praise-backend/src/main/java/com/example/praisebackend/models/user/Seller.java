@@ -1,6 +1,8 @@
-package com.example.praisebackend.models;
+package com.example.praisebackend.models.user;
 
 import java.util.List;
+
+import com.example.praisebackend.models.product.Product;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
