@@ -1,4 +1,6 @@
-package com.example.praisebackend.dtos;
+package com.example.praisebackend.dtos.users;
+
+import java.time.LocalDateTime;
 
 import com.example.praisebackend.models.Role;
 
@@ -11,5 +13,6 @@ public class RegisterRequestDTO {
     private String email;
     private String password;
     private Role role;
+    private LocalDateTime creationTime;
 
 }

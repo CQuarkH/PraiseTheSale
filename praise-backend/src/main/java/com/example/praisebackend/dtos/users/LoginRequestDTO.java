@@ -1,4 +1,4 @@
-package com.example.praisebackend.dtos;
+package com.example.praisebackend.dtos.users;
 
 import lombok.Data;
 

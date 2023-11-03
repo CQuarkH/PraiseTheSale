@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.praisebackend.dtos.UserResponseDTO;
-import com.example.praisebackend.dtos.UserRequestUpdateDTO;
+import com.example.praisebackend.dtos.users.UserRequestUpdateDTO;
+import com.example.praisebackend.dtos.users.UserResponseDTO;
 import com.example.praisebackend.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
 

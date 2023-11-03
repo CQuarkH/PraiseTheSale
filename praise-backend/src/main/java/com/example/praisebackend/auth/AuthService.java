@@ -2,19 +2,18 @@ package com.example.praisebackend.auth;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.praisebackend.auth.jwt.JwtTokenService;
-import com.example.praisebackend.dtos.LoginRequestDTO;
-import com.example.praisebackend.dtos.RegisterRequestDTO;
+import com.example.praisebackend.dtos.mappers.UserMapper;
+import com.example.praisebackend.dtos.users.LoginRequestDTO;
+import com.example.praisebackend.dtos.users.RegisterRequestDTO;
 import com.example.praisebackend.models.PasswordResetToken;
 import com.example.praisebackend.models.user.User;
 import com.example.praisebackend.repositories.PasswordResetTokenRepository;
@@ -37,7 +36,7 @@ public class AuthService {
 
     private final JwtTokenService jwtTokenService;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     private String findUserAndGenerateToken(String email) {
         UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(email));
@@ -62,9 +61,9 @@ public class AuthService {
         }
     }
 
-    public AuthResponseDTO registerUser(RegisterRequestDTO user) throws Exception {
+    public AuthResponseDTO registerUser(RegisterRequestDTO registerRequestDTO) throws Exception {
         try {
-            User newUser = createUser(user);
+            User newUser = userMapper.registerUserDTOtoUser(registerRequestDTO);
             userRepository.save(newUser);
             UserPrincipal userPrincipal = new UserPrincipal(newUser);
             Map<String, Object> claims = new HashMap<>();
@@ -77,15 +76,12 @@ public class AuthService {
         }
     }
 
-    private User createUser(RegisterRequestDTO userRegisterDTO) {
-        User user = new User();
-        user.setName(userRegisterDTO.getName());
-        user.setEmail(userRegisterDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
-        user.setRole(userRegisterDTO.getRole());
-        user.setCreationTime(LocalDateTime.now());
+    public void checkIfUserAlreadyExists(User user) throws Exception {
 
-        return user;
+    }
+
+    private boolean userAlreadyExists(User user) {
+        return userRepository.findByEmail(user.getEmail()) != null;
 
     }
 

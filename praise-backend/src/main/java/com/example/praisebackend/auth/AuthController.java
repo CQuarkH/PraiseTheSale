@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.praisebackend.dtos.LoginRequestDTO;
-import com.example.praisebackend.dtos.RegisterRequestDTO;
+import com.example.praisebackend.dtos.users.LoginRequestDTO;
+import com.example.praisebackend.dtos.users.RegisterRequestDTO;
 
 import lombok.RequiredArgsConstructor;
 

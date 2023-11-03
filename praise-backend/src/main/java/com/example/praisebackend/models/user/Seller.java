@@ -1,21 +1,21 @@
 package com.example.praisebackend.models.user;
 
-import java.util.List;
-
-import com.example.praisebackend.models.product.Product;
-
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
-public class Seller {
-    @Id
-    private Long id;
+@PrimaryKeyJoinColumn(name = "id")
+@ToString(callSuper = true)
+@DiscriminatorValue("SELLER")
+public class Seller extends User {
     private String contactEmail;
+    private String contactPhone;
     private double rating;
-    @OneToMany(mappedBy = "seller")
-    private List<Product> productList;
+
 }

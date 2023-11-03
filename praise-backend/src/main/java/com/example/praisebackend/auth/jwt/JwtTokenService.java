@@ -62,7 +62,8 @@ public class JwtTokenService {
 
     }
 
-    public Long getUserIDFromToken(String token) {
+    public Long getUserIDFromHeaderToken(String header) {
+        String token = header.replace("Bearer ", "").trim();
         Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
         return Long.valueOf(claims.get("userID").toString());
     }
