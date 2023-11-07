@@ -27,6 +27,8 @@ public class SellerController {
     private final SellerService sellerService;
     private final ComplaintService complaintService;
 
+    @PutMapping
+
     @PostMapping("/products")
     public ResponseEntity<?> createProduct(@RequestBody ProductRequestDTO createProductRequest,
             @RequestHeader("Authorization") String authHeader) {
@@ -62,9 +64,10 @@ public class SellerController {
     }
 
     @DeleteMapping("/products/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long productId,
+            @RequestHeader("Authorization") String authHeader) {
         try {
-            sellerService.deleteProduct(productId);
+            sellerService.deleteProduct(productId, authHeader);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

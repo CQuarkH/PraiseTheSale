@@ -7,6 +7,7 @@ import com.example.praisebackend.dtos.products.GetProductsOnlyResponseDTO;
 import com.example.praisebackend.dtos.products.GetProductsResponseDTO;
 import com.example.praisebackend.dtos.products.ProductRequestDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
+import com.example.praisebackend.dtos.products.SuspendProductRequestDTO;
 import com.example.praisebackend.models.product.Category;
 import com.example.praisebackend.models.product.Product;
 import com.example.praisebackend.repositories.ProductRepository;
@@ -23,13 +24,27 @@ public class ProductService {
 
     private final ProductMapper productMapper;
 
+    private final AuditLogService auditLogService;
+
     public void createProduct(ProductRequestDTO createProductRequest) throws Exception {
         try {
-            Product newProduct = productMapper.createProductDTOToProduct(createProductRequest);
-            productRepository.save(newProduct);
-
+            Product newProduct = productRepository.save(productMapper.createProductDTOToProduct(createProductRequest));
+            auditLogService.logCreateProduct(newProduct.getSeller().getId(), newProduct.getId());
         } catch (Exception e) {
             throw new Exception("Error on product saving: " + e.getMessage());
+
+        }
+    }
+
+    public void suspendProduct(SuspendProductRequestDTO suspendProductRequestDTO) throws Exception {
+        try {
+            Product product = getProductByID(suspendProductRequestDTO.getProductId());
+            product.setSuspended(true);
+            productRepository.save(product);
+            auditLogService.logSuspendedProduct(suspendProductRequestDTO.getAdminId(),
+                    suspendProductRequestDTO.getProductId(), suspendProductRequestDTO.getReason());
+        } catch (Exception e) {
+            throw new Exception("Error on product suspending: " + e.getMessage());
 
         }
     }
@@ -50,21 +65,22 @@ public class ProductService {
 
     }
 
-    public void deleteProduct(Long productID) throws Exception {
+    public void deleteProduct(Long productID, Long sellerID) throws Exception {
         try {
             productRepository.deleteById(productID);
+            auditLogService.logDeleteProduct(sellerID, productID);
         } catch (Exception e) {
             throw new Exception("Error on product deleting: " + e.getMessage());
         }
 
     }
 
-    public void markProductAsSold(Long productID) throws Exception {
+    public void markProductAsSold(Long productID, Long sellerID) throws Exception {
         try {
             Product product = getProductByID(productID);
             product.setSold(true);
             productRepository.save(product);
-
+            auditLogService.logMarkProductAsSold(sellerID, productID);
         } catch (Exception e) {
             throw new Exception("Error marking product as sold: " + e.getMessage());
         }
@@ -74,14 +90,15 @@ public class ProductService {
     public GetProductsOnlyResponseDTO getAvailableProductsBySeller(Long sellerID) {
         return GetProductsOnlyResponseDTO.builder()
                 .products(productMapper.productsToProductOnlyResponseDTOs(
-                        productRepository.findBySellerIdAndIsSoldFalse(sellerID)))
+                        productRepository.findBySellerIdAndIsSoldFalseAndIsSuspendedFalse(sellerID)))
                 .build();
     }
 
     public GetProductsResponseDTO getAvailableProducts() {
         return GetProductsResponseDTO.builder()
                 .products(
-                        productMapper.productsToProductResponseDTOs(productRepository.findByIsSoldFalse()))
+                        productMapper.productsToProductResponseDTOs(
+                                productRepository.findByIsSoldFalseAndIsSuspendedFalse()))
                 .build();
     }
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.praisebackend.dtos.buyers.RequestSellerDataDTO;
 import com.example.praisebackend.dtos.complaints.ComplaintRequestDTO;
 import com.example.praisebackend.models.product.Category;
 import com.example.praisebackend.services.BuyerService;
@@ -25,6 +26,18 @@ public class BuyerController {
 
     private final BuyerService buyerService;
     private final ComplaintService complaintService;
+
+    @PostMapping("/request-seller-data")
+    public ResponseEntity<?> requestSellerData(
+            @RequestBody RequestSellerDataDTO requestSellerDataDTO,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            buyerService.requestSellerData(requestSellerDataDTO, authHeader);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping("/products")
     public ResponseEntity<?> getProducts() {

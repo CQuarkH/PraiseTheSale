@@ -22,7 +22,7 @@ public class SecurityConstants {
         };
 
         public static final String[] COMMON_URLS = {
-                        "/api/users/**"
+                        "/api/user/**"
         };
 
         public static final String ADMIN_ROLE = "ADMIN";

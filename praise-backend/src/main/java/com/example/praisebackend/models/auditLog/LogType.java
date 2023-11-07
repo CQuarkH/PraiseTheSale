@@ -3,6 +3,7 @@ package com.example.praisebackend.models.auditLog;
 public enum LogType {
     REQUEST_SELLER_DATA,
     USER_BANNED,
+    USER_UNBANNED,
     CHANGE_PASSWORD,
     PRODUCT_ADDED,
     PRODUCT_SUSPENDED,

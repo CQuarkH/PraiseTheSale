@@ -41,4 +41,6 @@ public class Complaint {
     @ManyToOne
     @JoinColumn(name = "target_user_id")
     private User targetUser;
+
+    private String resolutionDetails;
 }

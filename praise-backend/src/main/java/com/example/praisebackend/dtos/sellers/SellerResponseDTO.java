@@ -1,14 +1,15 @@
 package com.example.praisebackend.dtos.sellers;
 
+import com.example.praisebackend.dtos.users.UserResponseDTO;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class SellerResponseDTO {
-
-    private Long id;
-    private String name;
-    private String description;
+@EqualsAndHashCode(callSuper = true)
+public class SellerResponseDTO extends UserResponseDTO {
+    private String contactEmail;
+    private String contactPhone;
     private double rating;
-    private String imageLink;
 
 }

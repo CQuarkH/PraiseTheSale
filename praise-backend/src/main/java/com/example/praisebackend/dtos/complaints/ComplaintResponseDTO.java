@@ -2,7 +2,7 @@ package com.example.praisebackend.dtos.complaints;
 
 import java.time.LocalDateTime;
 
-import com.example.praisebackend.dtos.products.ProductResponseDTO;
+import com.example.praisebackend.dtos.products.ProductOnlyResponseDTO;
 import com.example.praisebackend.dtos.users.UserResponseDTO;
 import com.example.praisebackend.models.complaint.ComplaintStatus;
 
@@ -17,7 +17,8 @@ public class ComplaintResponseDTO {
     private String context;
     private LocalDateTime dateTime;
     private ComplaintStatus complaintStatus;
-    private ProductResponseDTO product;
+    private ProductOnlyResponseDTO product;
     private UserResponseDTO targetUser;
+    private UserResponseDTO user;
 
 }

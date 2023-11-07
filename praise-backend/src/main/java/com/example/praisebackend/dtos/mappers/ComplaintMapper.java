@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.praisebackend.dtos.complaints.ComplaintRequestDTO;
 import com.example.praisebackend.dtos.complaints.ComplaintResponseDTO;
+import com.example.praisebackend.dtos.complaints.ResolveComplaintResponseDTO;
 import com.example.praisebackend.models.complaint.Complaint;
+import com.example.praisebackend.models.complaint.ComplaintStatus;
 
 @Mapper(componentModel = "spring")
 public class ComplaintMapper {
@@ -27,6 +29,7 @@ public class ComplaintMapper {
         complaint.setUser(userMapper.idToUser(complaintRequestDTO.getUserID()));
         complaint.setTargetUser(userMapper.idToUser(complaintRequestDTO.getTargetUserID()));
         complaint.setSubject(complaintRequestDTO.getSubject());
+        complaint.setStatus(ComplaintStatus.PENDING);
         return complaint;
     }
 
@@ -37,9 +40,16 @@ public class ComplaintMapper {
                 .context(complaint.getContext())
                 .dateTime(complaint.getDateTime())
                 .complaintStatus(complaint.getStatus())
-                .product(productMapper.productToProductResponseDTO(complaint.getProduct()))
+                .product(productMapper.productToProductOnlyResponseDTO(complaint.getProduct()))
                 .targetUser(userMapper.userToUserDTO(complaint.getTargetUser()))
+                .user(userMapper.userToUserDTO(complaint.getUser()))
                 .build();
+    }
+
+    public ResolveComplaintResponseDTO complaintToResolveComplaintResponseDTO(Complaint complaint) {
+        return ResolveComplaintResponseDTO.builder()
+                .complaint(complaintToComplaintResponseDTO(complaint))
+                .resolutionDetails(complaint.getResolutionDetails()).build();
     }
 
     public List<ComplaintResponseDTO> complaintsToComplaintResponseDTOs(List<Complaint> complaints) {
@@ -48,4 +58,7 @@ public class ComplaintMapper {
                 .collect(Collectors.toList());
     }
 
+    public List<ResolveComplaintResponseDTO> complaintsToResolveComplaintResponseDTOs(List<Complaint> complaints) {
+        return complaints.stream().map(this::complaintToResolveComplaintResponseDTO).collect(Collectors.toList());
+    }
 }

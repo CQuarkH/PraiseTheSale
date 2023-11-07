@@ -9,6 +9,7 @@ import com.example.praisebackend.dtos.products.ProductRequestDTO;
 import com.example.praisebackend.dtos.products.GetProductsOnlyResponseDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
 import com.example.praisebackend.dtos.sellers.GetSalesHistoryResponse;
+import com.example.praisebackend.dtos.sellers.GetSellersFromBuyerResponseDTO;
 import com.example.praisebackend.dtos.sellers.GetSellersResponseDTO;
 import com.example.praisebackend.models.user.SalesHistory;
 import com.example.praisebackend.repositories.SalesHistoryRepository;
@@ -59,9 +60,9 @@ public class SellerService {
         }
     }
 
-    public void deleteProduct(Long productID) throws Exception {
+    public void deleteProduct(Long productID, String authHeader) throws Exception {
         try {
-            productService.deleteProduct(productID);
+            productService.deleteProduct(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader));
         } catch (Exception e) {
             throw new Exception("Error on product deleting: " + e.getMessage());
         }
@@ -70,7 +71,7 @@ public class SellerService {
 
     public void markProductAsSold(Long productID, String authHeader) throws Exception {
         try {
-            productService.markProductAsSold(productID);
+            productService.markProductAsSold(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader));
             salesHistoryRepository.save(
                     createSalesHistory(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader)));
 
@@ -95,12 +96,23 @@ public class SellerService {
 
     }
 
+    public GetSellersFromBuyerResponseDTO getSellersFromBuyer() throws Exception {
+        try {
+            return GetSellersFromBuyerResponseDTO.builder()
+                    .sellers(
+                            sellerMapper.sellerFromBuyerResponseDTOs(
+                                    sellerRepository.findAll()))
+                    .build();
+        } catch (Exception e) {
+            throw new Exception("Error fetching sellers: " + e.getMessage());
+        }
+    }
+
     public GetSellersResponseDTO getSellers() throws Exception {
         try {
             return GetSellersResponseDTO.builder()
-                    .sellers(
-                            sellerMapper.sellersToSellerResponseDTOs(
-                                    sellerRepository.findAll()))
+                    .sellers(sellerMapper.sellersToSellerResponseDTOs(
+                            sellerRepository.findAll()))
                     .build();
         } catch (Exception e) {
             throw new Exception("Error fetching sellers: " + e.getMessage());

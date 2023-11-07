@@ -17,6 +17,7 @@ import com.example.praisebackend.repositories.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -71,6 +72,7 @@ public abstract class UserMapper {
         user.setEmail(registerRequestDTO.getEmail());
         user.setPassword(encodePassword(registerRequestDTO.getPassword()));
         user.setRole(registerRequestDTO.getRole());
+        user.setCreationTime(LocalDateTime.now());
     }
 
     @Named("encodePassword")

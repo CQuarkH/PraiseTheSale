@@ -68,6 +68,12 @@ public class JwtTokenService {
         return Long.valueOf(claims.get("userID").toString());
     }
 
+    public String getUserRoleFromHeaderToken(String header) {
+        String token = header.replace("Bearer ", "").trim();
+        Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+        return claims.get("role").toString();
+    }
+
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

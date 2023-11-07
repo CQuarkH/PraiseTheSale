@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.praisebackend.models.Role;
 import com.example.praisebackend.models.user.User;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class UserPrincipal implements UserDetails {
     private boolean isEnabled;
     private LocalDateTime creationTime;
     private String description;
+    private Role role;
 
     public UserPrincipal(User user) {
         this.id = user.getId();
@@ -28,6 +30,13 @@ public class UserPrincipal implements UserDetails {
         this.isEnabled = !user.isBanned();
         this.creationTime = user.getCreationTime();
         this.description = user.getDescription();
+        this.role = user.getRole();
+        this.isEnabled = !user.isBanned();
+
+    }
+
+    public Role getRole() {
+        return this.role;
     }
 
     public Long getID() {

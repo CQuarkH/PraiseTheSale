@@ -4,12 +4,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.praisebackend.auth.jwt.JwtTokenService;
+import com.example.praisebackend.dtos.buyers.RequestSellerDataDTO;
 import com.example.praisebackend.dtos.products.CategoryResponseDTO;
 import com.example.praisebackend.dtos.products.GetCategoriesResponseDTO;
 import com.example.praisebackend.dtos.products.GetProductsOnlyResponseDTO;
 import com.example.praisebackend.dtos.products.GetProductsResponseDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
-import com.example.praisebackend.dtos.sellers.GetSellersResponseDTO;
+import com.example.praisebackend.dtos.sellers.GetSellersFromBuyerResponseDTO;
 import com.example.praisebackend.models.product.Category;
 
 import io.jsonwebtoken.lang.Arrays;
@@ -21,6 +23,8 @@ public class BuyerService {
 
     private final ProductService productService;
     private final SellerService sellerService;
+    private final JwtTokenService jwtTokenService;
+    private final AuditLogService auditLogService;
 
     public GetProductsResponseDTO getProducts() throws Exception {
         try {
@@ -60,9 +64,9 @@ public class BuyerService {
         }
     }
 
-    public GetSellersResponseDTO getSellers() throws Exception {
+    public GetSellersFromBuyerResponseDTO getSellers() throws Exception {
         try {
-            return sellerService.getSellers();
+            return sellerService.getSellersFromBuyer();
         } catch (Exception e) {
             throw new Exception("Error fetching sellers: " + e.getMessage());
         }
@@ -74,6 +78,17 @@ public class BuyerService {
         } catch (Exception e) {
             throw new Exception("Error fetching products by seller: " + e.getMessage());
         }
+    }
+
+    public void requestSellerData(RequestSellerDataDTO requestSellerDataDTO, String authHeader) throws Exception {
+        try {
+            requestSellerDataDTO.setUserId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
+            auditLogService.logRequestSellerData(requestSellerDataDTO.getUserId(), requestSellerDataDTO.getSellerId(),
+                    requestSellerDataDTO.getProductId());
+        } catch (Exception e) {
+            throw new Exception("Error on requesting seller data: " + e.getMessage());
+        }
+
     }
 
     private CategoryResponseDTO categoryMapper(Category category) {

@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
 
     @Query("SELECT u FROM User u WHERE u.creationTime >= :date AND u.role != :role")
-    List<User> findUsersCreatedAfterWithoutRole(LocalDateTime localDateTime, @Param("role") Role role);
+    List<User> findUsersCreatedAfterWithoutRole(@Param("date") LocalDateTime localDateTime, @Param("role") Role role);
 
     @Query("SELECT u FROM User u WHERE u.role != :role")
     List<User> findUsersWithoutRole(@Param("role") Role role);

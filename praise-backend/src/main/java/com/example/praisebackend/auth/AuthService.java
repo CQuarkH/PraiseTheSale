@@ -38,12 +38,16 @@ public class AuthService {
 
     private final UserMapper userMapper;
 
-    private String findUserAndGenerateToken(String email) {
-        UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(email));
+    private Map<String, Object> generateTokenClaims(UserPrincipal userPrincipal) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userID", userPrincipal.getID());
-        return jwtTokenService.generateToken(claims, userPrincipal);
+        claims.put("role", userPrincipal.getRole());
+        return claims;
+    }
 
+    private String findUserAndGenerateToken(String email) {
+        UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(email));
+        return jwtTokenService.generateToken(generateTokenClaims(userPrincipal), userPrincipal);
     }
 
     public AuthResponseDTO authenticate(LoginRequestDTO requestDTO) throws Exception {
@@ -53,36 +57,38 @@ public class AuthService {
                             requestDTO.getEmail(),
                             requestDTO.getPassword()));
 
+            UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(requestDTO.getEmail()));
+
             return AuthResponseDTO
                     .builder()
-                    .token(findUserAndGenerateToken(requestDTO.getEmail())).build();
+                    .token(findUserAndGenerateToken(requestDTO.getEmail()))
+                    .role(userPrincipal.getRole())
+                    .build();
         } catch (Exception e) {
-            throw new Exception("Error trying to authenticate : " + e.getMessage());
+            throw new Exception("Error trying to authenticate: " + e.getMessage());
         }
     }
 
     public AuthResponseDTO registerUser(RegisterRequestDTO registerRequestDTO) throws Exception {
-        try {
-            User newUser = userMapper.registerUserDTOtoUser(registerRequestDTO);
-            userRepository.save(newUser);
-            UserPrincipal userPrincipal = new UserPrincipal(newUser);
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("userID", userPrincipal.getID());
-            return AuthResponseDTO.builder().token(
-                    jwtTokenService.generateToken(claims, userPrincipal))
-                    .build();
-        } catch (Exception e) {
-            throw new Exception("Error registering user: " + e.getMessage());
-        }
+        User newUser = userMapper.registerUserDTOtoUser(registerRequestDTO);
+        checkIfUserAlreadyExists(newUser);
+        userRepository.save(newUser);
+        UserPrincipal userPrincipal = new UserPrincipal(newUser);
+
+        return AuthResponseDTO.builder().token(
+                jwtTokenService.generateToken(generateTokenClaims(userPrincipal), userPrincipal))
+                .role(userPrincipal.getRole())
+                .build();
     }
 
     public void checkIfUserAlreadyExists(User user) throws Exception {
-
+        if (userAlreadyExists(user)) {
+            throw new Exception("User already exists with email: " + user.getEmail());
+        }
     }
 
     private boolean userAlreadyExists(User user) {
         return userRepository.findByEmail(user.getEmail()) != null;
-
     }
 
     // create separated and dedicated service for reset password handling!!!
