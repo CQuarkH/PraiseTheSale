@@ -14,7 +14,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @DiscriminatorValue("SELLER")
 public class Seller extends User {
-    private String contactEmail;
     private String contactPhone;
     private double rating;
 

@@ -1,5 +1,6 @@
 package com.example.praisebackend.dtos.mappers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class ComplaintMapper {
     public Complaint complaintRequestDTOToComplaint(ComplaintRequestDTO complaintRequestDTO) {
         Complaint complaint = new Complaint();
         complaint.setContext(complaintRequestDTO.getContext());
-        complaint.setDateTime(complaintRequestDTO.getDateTime());
+        complaint.setDateTime(LocalDateTime.now());
         complaint.setProduct(productMapper.idToProduct(complaintRequestDTO.getProductID()));
         complaint.setUser(userMapper.idToUser(complaintRequestDTO.getUserID()));
         complaint.setTargetUser(userMapper.idToUser(complaintRequestDTO.getTargetUserID()));

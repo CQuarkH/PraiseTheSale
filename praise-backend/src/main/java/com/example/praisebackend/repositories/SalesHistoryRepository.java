@@ -10,4 +10,8 @@ import com.example.praisebackend.models.user.SalesHistory;
 @Repository
 public interface SalesHistoryRepository extends JpaRepository<SalesHistory, Long> {
     List<SalesHistory> findBySellerId(Long sellerId);
+
+    void deleteByProductId(Long productId);
+
+    boolean existsByProductId(Long productId);
 }

@@ -2,12 +2,11 @@ package com.example.praisebackend.services;
 
 import com.example.praisebackend.auth.jwt.JwtTokenService;
 import com.example.praisebackend.dtos.mappers.UserMapper;
-import com.example.praisebackend.dtos.users.BanUserRequestDTO;
 import com.example.praisebackend.dtos.users.ExtendedUserResponseDTO;
 import com.example.praisebackend.dtos.users.GetUsersResponseDTO;
-import com.example.praisebackend.dtos.users.UnbanUserRequestDTO;
-import com.example.praisebackend.dtos.users.UserRequestUpdateDTO;
+import com.example.praisebackend.dtos.users.ProfileUpdateRequestDTO;
 import com.example.praisebackend.dtos.users.UserResponseDTO;
+import com.example.praisebackend.dtos.users.UserStatusChangeRequestDTO;
 import com.example.praisebackend.exceptions.UserNotFoundException;
 import com.example.praisebackend.models.Role;
 import com.example.praisebackend.models.user.User;
@@ -30,7 +29,7 @@ public class UserService {
 
     private final JwtTokenService jwtTokenService;
 
-    public void banUser(BanUserRequestDTO banUserRequestDTO) throws Exception {
+    public void banUser(UserStatusChangeRequestDTO banUserRequestDTO) throws Exception {
         try {
             User user = getUserByID(banUserRequestDTO.getUserId());
             user.setBanned(true);
@@ -43,7 +42,7 @@ public class UserService {
         }
     }
 
-    public void unbanUser(UnbanUserRequestDTO unbanUserRequestDTO) throws Exception {
+    public void unbanUser(UserStatusChangeRequestDTO unbanUserRequestDTO) throws Exception {
         try {
             User user = getUserByID(unbanUserRequestDTO.getUserId());
             user.setBanned(false);
@@ -61,6 +60,7 @@ public class UserService {
     public UserResponseDTO getUserProfileByHeader(String authHeader) throws Exception {
         Long userID = jwtTokenService.getUserIDFromHeaderToken(authHeader);
         try {
+
             return userMapper.userToUserDTO(getUserByID(userID));
         } catch (Exception e) {
             throw new UserNotFoundException(userID);
@@ -69,13 +69,13 @@ public class UserService {
 
     }
 
-    public UserResponseDTO updateUserProfile(UserRequestUpdateDTO userUpdateDTO) throws Exception {
+    public UserResponseDTO updateUserProfile(ProfileUpdateRequestDTO userUpdateDTO) throws Exception {
         Long userID = jwtTokenService.getUserIDFromHeaderToken(userUpdateDTO.getAuthHeader());
         try {
             User user = getUserByID(userID);
             user.setName(userUpdateDTO.getName());
-            user.setEmail(userUpdateDTO.getEmail());
             user.setDescription(userUpdateDTO.getDescription());
+            user.setImageLink(userUpdateDTO.getImageLink());
 
             userRepository.save(user);
             return userMapper.userToUserDTO(user);
@@ -87,10 +87,11 @@ public class UserService {
     }
 
     public void deleteUser(Long id) throws Exception {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-        } else {
-            throw new UserNotFoundException(id);
+        try {
+            User user = getUserByID(id);
+            userRepository.delete(user);
+        } catch (Exception e) {
+            throw new Exception("Error on deleting user account: " + e.getMessage());
         }
     }
 

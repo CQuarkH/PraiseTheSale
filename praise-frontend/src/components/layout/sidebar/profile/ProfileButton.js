@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { useUserContext } from '../../test-api/UserContext';
-import { USER_TYPES } from '../../test-api/UserTypes';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import ProfileCard from './ProfileCard';
+import { capitalizeFirstLetter } from '../../../common/utils';
+import { useAuth } from '../../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function ProfileButton() {
-
-  const { value: user } = useUserContext();
   const [isPressed, setPressed] = useState(false);
-
-  
-  var userTypeLabel;
-
-  if(user === USER_TYPES.BUYER){
-    userTypeLabel = 'Buyer'
-  } else if (user === USER_TYPES.SELLER){
-    userTypeLabel = 'Seller'
-  } else if (user === USER_TYPES.ADMIN){
-    userTypeLabel = 'Admin'
-  }
+  const { authData } = useAuth();
+  const navigate = useNavigate();
 
   const closeCard = () => {
     setPressed(!isPressed);
+  }
+
+  const handleLoginRedirect = () => {
+    navigate('/login');
   }
 
   return (
@@ -34,22 +28,39 @@ function ProfileButton() {
         whileTap={{ scale: 0.99 }}
         whileHover={{ scale: 1.01 }}
       >
-        <AccountBoxIcon fontSize="large" style={{ color: "#98FF98" }} />
-        <div className="sidebar-profile-button-text">
-          <span>{user.name}</span>
-          <span>{userTypeLabel}</span>
-        </div>
+        {authData.user ? (
+          <>
+            {authData.user.imageLink ? (
+              <img 
+                src={authData.user.imageLink} 
+                alt="Profile" 
+                style={{ width: '50px', height: '50px', borderRadius: '10px' }} 
+              />
+            ) : (
+              <AccountBoxIcon fontSize="large" style={{ color: "#98FF98" }} />
+            )}
+            <div className="sidebar-profile-button-text">
+              <span>{authData.user.name}</span>
+              <span>{capitalizeFirstLetter(authData.user.role)}</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <AccountBoxIcon fontSize="large" style={{ color: "#98FF98" }} />
+            <div className="sidebar-profile-button-text" onClick={handleLoginRedirect}>
+              <span>Login</span>
+            </div>
+          </>
+        )}
       </motion.div>
 
-        {isPressed && (
-          <div className="profile-overlay">
-             <ProfileCard key={Date.now()} user={user} closeCard={closeCard} layoutID='profile-button'/>
-          </div>
-        )}
-      
+      {isPressed && authData.user && (
+        <div className="profile-overlay">
+          <ProfileCard key={Date.now()} user={authData.user} closeCard={closeCard} layoutID='profile-button'/>
+        </div>
+      )}
     </>
   );
-  
 }
 
-export default ProfileButton
+export default ProfileButton;

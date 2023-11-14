@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 @Builder
 public class GetSellersFromBuyerResponseDTO {
-    private List<SellerFromBuyerResponseDTO> sellers;
+    private List<SellerToBuyerResponseDTO> sellers;
 
 }

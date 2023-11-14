@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
-import com.example.praisebackend.dtos.sellers.SellerFromBuyerResponseDTO;
+import com.example.praisebackend.dtos.sellers.SellerToBuyerResponseDTO;
 import com.example.praisebackend.dtos.sellers.SellerResponseDTO;
 import com.example.praisebackend.models.user.Seller;
 
@@ -17,25 +17,25 @@ public abstract class SellerMapper {
         response.setEmail(seller.getEmail());
         response.setDescription(seller.getDescription());
         response.setCreationTime(seller.getCreationTime());
-
-        response.setContactEmail(seller.getContactEmail());
         response.setContactPhone(seller.getContactPhone());
         response.setRating(seller.getRating());
 
         return response;
     }
 
-    public SellerFromBuyerResponseDTO sellerFromBuyerResponseDTO(Seller seller) {
-        return SellerFromBuyerResponseDTO.builder()
+    public SellerToBuyerResponseDTO sellerToBuyerResponseDTO(Seller seller) {
+        return SellerToBuyerResponseDTO.builder()
                 .id(seller.getId())
                 .name(seller.getName())
                 .description(seller.getDescription())
                 .rating(seller.getRating())
+                .email(seller.getEmail())
+                .contactPhone(seller.getContactPhone())
                 .imageLink(seller.getImageLink()).build();
     }
 
-    public List<SellerFromBuyerResponseDTO> sellerFromBuyerResponseDTOs(List<Seller> sellers) {
-        return sellers.stream().map(this::sellerFromBuyerResponseDTO).collect(Collectors.toList());
+    public List<SellerToBuyerResponseDTO> sellersToBuyerResponseDTOs(List<Seller> sellers) {
+        return sellers.stream().map(this::sellerToBuyerResponseDTO).collect(Collectors.toList());
     }
 
     public List<SellerResponseDTO> sellersToSellerResponseDTOs(List<Seller> sellers) {

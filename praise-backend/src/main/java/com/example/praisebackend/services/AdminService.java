@@ -11,12 +11,11 @@ import com.example.praisebackend.dtos.complaints.ResolveComplaintResponseDTO;
 import com.example.praisebackend.dtos.complaints.UpdateComplaintRequestDTO;
 import com.example.praisebackend.dtos.products.GetProductsResponseDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
-import com.example.praisebackend.dtos.products.SuspendProductRequestDTO;
+import com.example.praisebackend.dtos.products.ProductStatusChangeRequestDTO;
 import com.example.praisebackend.dtos.sellers.GetSellersResponseDTO;
-import com.example.praisebackend.dtos.users.BanUserRequestDTO;
 import com.example.praisebackend.dtos.users.ExtendedUserResponseDTO;
 import com.example.praisebackend.dtos.users.GetUsersResponseDTO;
-import com.example.praisebackend.dtos.users.UnbanUserRequestDTO;
+import com.example.praisebackend.dtos.users.UserStatusChangeRequestDTO;
 import com.example.praisebackend.models.Role;
 
 import lombok.RequiredArgsConstructor;
@@ -48,12 +47,23 @@ public class AdminService {
         }
     }
 
-    public void suspendProduct(SuspendProductRequestDTO suspendProductRequestDTO, String authHeader) throws Exception {
+    public void suspendProduct(ProductStatusChangeRequestDTO suspendProductRequestDTO, String authHeader)
+            throws Exception {
         try {
             suspendProductRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
             productService.suspendProduct(suspendProductRequestDTO);
         } catch (Exception e) {
             throw new Exception("Error on product suspending: " + e.getMessage());
+        }
+    }
+
+    public void unsuspendProduct(ProductStatusChangeRequestDTO unsuspendProductRequestDTO, String authHeader)
+            throws Exception {
+        try {
+            unsuspendProductRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
+            productService.unsuspendProduct(unsuspendProductRequestDTO);
+        } catch (Exception e) {
+            throw new Exception("Error on product unsuspending: " + e.getMessage());
         }
     }
 
@@ -100,7 +110,7 @@ public class AdminService {
 
     }
 
-    public void banUser(BanUserRequestDTO banUserRequestDTO, String authHeader) throws Exception {
+    public void banUser(UserStatusChangeRequestDTO banUserRequestDTO, String authHeader) throws Exception {
         try {
             banUserRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
             userService.banUser(banUserRequestDTO);
@@ -109,7 +119,7 @@ public class AdminService {
         }
     }
 
-    public void unbanUser(UnbanUserRequestDTO unbanUserRequestDTO, String authHeader) throws Exception {
+    public void unbanUser(UserStatusChangeRequestDTO unbanUserRequestDTO, String authHeader) throws Exception {
         try {
             unbanUserRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
             userService.unbanUser(unbanUserRequestDTO);

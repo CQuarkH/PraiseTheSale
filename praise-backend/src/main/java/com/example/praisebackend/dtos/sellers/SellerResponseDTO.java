@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SellerResponseDTO extends UserResponseDTO {
-    private String contactEmail;
     private String contactPhone;
     private double rating;
 

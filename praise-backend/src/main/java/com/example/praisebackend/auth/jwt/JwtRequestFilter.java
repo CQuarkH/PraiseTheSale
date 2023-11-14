@@ -44,10 +44,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if (jwtTokenService.validateToken(jwt, userDetails)) {
 
-                if (!userDetails.isEnabled()) {
+                if (!userDetails.isAccountNonLocked()) {
 
                     response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                            "Your account is disabled. Please, contact to an Administrator.");
+                            "Your account is locked. Please, contact to an Administrator.");
 
                     return;
                 }

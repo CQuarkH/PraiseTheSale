@@ -1,11 +1,15 @@
-import React from "react";
-import CustomInput from '../../page-components/utils/CustomInput';
+import React, {useState} from "react";
+import CustomInput from '../../../common/CustomInput';
 import SaveIcon from '@mui/icons-material/Save';
-import AnimatedButton from '../../page-components/utils/AnimatedButton';
+import AnimatedButton from '../../../common/AnimatedButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForm } from "react-hook-form";
-import { USER_TYPES } from "../../test-api/UserTypes";
-import ImageUploaderButton from "../../page-components/utils/ImageUploaderButton";
+import { USER_TYPES } from "../../../../test-api/UserTypes";
+import ImageUploaderButton from "../../../common/ImageUploaderButton";
+import { updateUserProfile } from "../../../../services/updateUserProfileService";
+import { useAxios } from "../../../../api/useAxios";
+import { useAuth } from "../../../../context/AuthContext";
+import { uploadImageService } from "../../../../services/uploadImageService";
 
 const NAME_RULES = {
     required: "Full name is required",
@@ -23,7 +27,6 @@ const PHONE_RULES = {
     }
 };
 
-
 const EMAIL_RULES = {
     required: "Email is required",
     pattern: {
@@ -32,22 +35,38 @@ const EMAIL_RULES = {
     }
   };
 
-
 const IMAGE_RULES = {
     required: "You must select an image!"
   };
   
 function UpdateProfileCard({user, toggleUpdating}){
 
+    const [selectedFile, setSelectedFile] = useState(null);
     const { control, handleSubmit, formState: { errors } } = useForm();
+    const { updateUserData } = useAuth();
+    const axiosInstance = useAxios('user');
 
-
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if(Object.keys(errors).length === 0){
-            toggleUpdating();
-            console.log(data);
+            try{
+
+              if(selectedFile){
+                const imageLink = await uploadImageService(selectedFile, null, '/users');
+                data.imageLink = imageLink;
+              }
+
+              await updateUserData(axiosInstance, data, selectedFile);
+              
+              toggleUpdating();
+            } catch (error){
+              console.error(error);
+            }
           }
     }
+
+    const handleFileSelect = (file) => {
+      setSelectedFile(file);
+    };
 
     return (
         <>
@@ -72,6 +91,7 @@ function UpdateProfileCard({user, toggleUpdating}){
                     error={errors.profileImage}
                     defaultValue={user.profileImage}
                     control={control}
+                    onFileSelect={handleFileSelect}
                     name='profileImage'/>
                   </div>
                   <div className='block-tile' style={{flex: 1}}>
@@ -81,7 +101,7 @@ function UpdateProfileCard({user, toggleUpdating}){
                    label='Full Name'
                    placeholder='Write your full name...'
                    type='text'
-                   name='fullName'
+                   name='name'
                    rules={NAME_RULES}
                    defaultValue={user.name}
                    control={control}/>

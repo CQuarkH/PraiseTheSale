@@ -20,4 +20,20 @@ public class EmailService {
                         + token);
         mailSender.send(message);
     }
+
+    public void sendConfirmationEmail(String toEmail, String token) throws Exception {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Account Confirmation");
+            message.setText(
+                    "Thank you for registering. Please click the following link to activate your account: "
+                            + "http://localhost:3000/confirm-account?token="
+                            + token);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new Exception("Error on sending confirmation email by JavaMailSender: " + e.getLocalizedMessage()
+                    + e.getMessage() + e.getCause());
+        }
+    }
 }

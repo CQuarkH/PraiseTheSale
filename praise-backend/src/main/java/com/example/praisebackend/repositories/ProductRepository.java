@@ -1,6 +1,7 @@
 package com.example.praisebackend.repositories;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.creationTime >= :date")
     List<Product> getProductsCreatedAfter(LocalDateTime date);
+
+    Optional<Product> findByIdAndSellerId(Long id, Long sellerId);
 
 }

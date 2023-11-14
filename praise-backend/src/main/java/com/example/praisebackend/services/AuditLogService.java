@@ -54,9 +54,22 @@ public class AuditLogService {
         logAuditEvent(sellerId, LogType.MARK_AS_SOLD, description);
     }
 
+    public void logUnmarkProductAsSold(Long sellerId, Long productId) {
+        String description = String.format("Seller with ID %d has unmarked as sold a product with ID %d", sellerId,
+                productId);
+        logAuditEvent(sellerId, LogType.UNMARK_AS_SOLD, description);
+    }
+
     public void logDeleteProduct(Long sellerId, Long productId) {
         String description = String.format("Seller with ID %d has deleted a product with ID %d", sellerId, productId);
         logAuditEvent(sellerId, LogType.PRODUCT_DELETED, description);
+    }
+
+    public void logUnsuspendProduct(Long adminId, Long productId, String reason) {
+        String description = String.format(
+                "Admin with ID %d has unsuspended a product with ID %d. Reason for unsuspension: %s",
+                adminId, productId, reason);
+        logAuditEvent(adminId, LogType.PRODUCT_UNSUSPENDED, description);
     }
 
     public void logSuspendedProduct(Long adminId, Long productId, String reason) {

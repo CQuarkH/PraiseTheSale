@@ -21,6 +21,7 @@ public class UserPrincipal implements UserDetails {
     private LocalDateTime creationTime;
     private String description;
     private Role role;
+    private boolean isAccountNonLocked;
 
     public UserPrincipal(User user) {
         this.id = user.getId();
@@ -31,7 +32,8 @@ public class UserPrincipal implements UserDetails {
         this.creationTime = user.getCreationTime();
         this.description = user.getDescription();
         this.role = user.getRole();
-        this.isEnabled = !user.isBanned();
+        this.isAccountNonLocked = !user.isBanned();
+        this.isEnabled = user.isEnabled();
 
     }
 
@@ -74,7 +76,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.isEnabled;
+        return this.isAccountNonLocked;
     }
 
     @Override

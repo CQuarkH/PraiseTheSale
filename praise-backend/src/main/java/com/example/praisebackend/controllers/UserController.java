@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.praisebackend.dtos.users.UserRequestUpdateDTO;
+import com.example.praisebackend.dtos.users.ProfileUpdateRequestDTO;
 import com.example.praisebackend.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authHeader,
-            @RequestBody UserRequestUpdateDTO userUpdateDTO) {
+            @RequestBody ProfileUpdateRequestDTO userUpdateDTO) {
         try {
             userUpdateDTO.setAuthHeader(authHeader);
             return ResponseEntity.ok(userService.updateUserProfile(userUpdateDTO));

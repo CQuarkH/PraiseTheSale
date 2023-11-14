@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
-import { USER_TYPES } from '../../test-api/UserTypes';
+import { USER_TYPES } from '../../../../test-api/UserTypes';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import StoreIcon from '@mui/icons-material/Store';
@@ -14,13 +14,16 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import EditIcon from '@mui/icons-material/Edit';
 import Edit from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import AnimatedButton from '../../page-components/utils/AnimatedButton';
-import CustomInput from '../../page-components/utils/CustomInput';
+import AnimatedButton from '../../../common/AnimatedButton';
 import UpdateProfileCard from './UpdateProfileCard';
+import { useAuth } from '../../../../context/AuthContext';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 function ProfileCard({user, closeCard, layoutID}) {
 
   const [ isUpdating, setIsUpdating ] = useState(false);
+
+  const { logout } = useAuth();
   
   const toggleUpdating = () => {
     setIsUpdating(!isUpdating);
@@ -39,14 +42,15 @@ function ProfileCard({user, closeCard, layoutID}) {
             ? 
             <UpdateProfileCard user={user} toggleUpdating={toggleUpdating}/> 
             :
-            <ViewProfileCard user={user} closeCard={() => closeCard()} toggleUpdating={toggleUpdating}/>
+            <ViewProfileCard 
+            logout={logout}
+            user={user} closeCard={() => closeCard()} toggleUpdating={toggleUpdating}/>
         }
     </motion.div>
   )
 }
 
-function ViewProfileCard({user, closeCard, toggleUpdating}){
-
+function ViewProfileCard({user, closeCard, toggleUpdating, logout}){
     return(
         <>
         <div className='card-options-container'>
@@ -56,8 +60,9 @@ function ViewProfileCard({user, closeCard, toggleUpdating}){
 
         <div className='flex-aligned-container'>
         <AnimatedButton
+        onClick={() => logout()}
         margin={10}
-        Icon={<PersonRemoveIcon style={{color: '#FF4C4C'}}/>}/>
+        Icon={<LogoutIcon/>}/>
 
         <AnimatedButton
         Icon={<EditIcon/>}
@@ -67,7 +72,7 @@ function ViewProfileCard({user, closeCard, toggleUpdating}){
         </div>
         <div className='card-content-container'>
          <div className='left-side-card'>
-            <img src={user.profileImage}/>
+            <img src={user.imageLink}/>
             <div className='standout-list-tile'>
                 {
                   user === USER_TYPES.SELLER ? (

@@ -8,13 +8,15 @@ import lombok.Data;
 @Data
 @Builder
 public class CategoryResponseDTO {
-    private Category category;
+    private Category name;
     private String categoryDescription;
     private int productLength;
+    private String imageLink;
 
     public void setCategory(Category category) {
-        this.category = category;
+        this.name = category;
         this.categoryDescription = category.getDescription();
+        this.imageLink = category.getImageLink();
     }
 
 }

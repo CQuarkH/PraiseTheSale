@@ -6,7 +6,11 @@ public class SecurityConstants {
                         "/api/auth/login",
                         "/api/auth/register",
                         "/api/auth/recoverPassword",
-                        "/api/auth/resetPasssword"
+                        "/api/auth/resetPasssword",
+                        "/api/auth/confirm-account",
+                        "/api/buyer/products/**",
+                        "/api/buyer/sellers/**",
+                        "/api/buyer/categories/**"
         };
 
         public static final String[] ADMIN_URLS = {

@@ -7,6 +7,7 @@ import com.example.praisebackend.dtos.mappers.SalesHistoryMapper;
 import com.example.praisebackend.dtos.mappers.SellerMapper;
 import com.example.praisebackend.dtos.products.ProductRequestDTO;
 import com.example.praisebackend.dtos.products.GetProductsOnlyResponseDTO;
+import com.example.praisebackend.dtos.products.ProductOnlyResponseDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
 import com.example.praisebackend.dtos.sellers.GetSalesHistoryResponse;
 import com.example.praisebackend.dtos.sellers.GetSellersFromBuyerResponseDTO;
@@ -15,6 +16,7 @@ import com.example.praisebackend.models.user.SalesHistory;
 import com.example.praisebackend.repositories.SalesHistoryRepository;
 import com.example.praisebackend.repositories.SellerRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -32,10 +34,11 @@ public class SellerService {
     private final SalesHistoryMapper salesHistoryMapper;
     private final SellerMapper sellerMapper;
 
-    public void registerProduct(ProductRequestDTO createProductRequest, String authHeader) throws Exception {
+    public ProductOnlyResponseDTO registerProduct(ProductRequestDTO createProductRequest, String authHeader)
+            throws Exception {
         try {
             createProductRequest.setSellerID(jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            productService.createProduct(createProductRequest);
+            return productService.createProduct(createProductRequest);
         } catch (Exception e) {
             throw new Exception("Error on product saving: " + e.getMessage());
         }
@@ -50,6 +53,14 @@ public class SellerService {
         }
     }
 
+    public ProductResponseDTO getOwnProduct(Long productID, String authHeader) throws Exception {
+        try {
+            return productService.productToSeller(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader));
+        } catch (Exception e) {
+            throw new Exception("Error fetching seller's product: " + e.getMessage());
+        }
+    }
+
     public ProductResponseDTO updateProduct(ProductRequestDTO updateProductRequest, String authHeader)
             throws Exception {
         try {
@@ -60,8 +71,12 @@ public class SellerService {
         }
     }
 
+    @Transactional
     public void deleteProduct(Long productID, String authHeader) throws Exception {
         try {
+            if (salesHistoryRepository.existsByProductId(productID)) {
+                salesHistoryRepository.deleteByProductId(productID);
+            }
             productService.deleteProduct(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader));
         } catch (Exception e) {
             throw new Exception("Error on product deleting: " + e.getMessage());
@@ -81,6 +96,16 @@ public class SellerService {
 
     }
 
+    @Transactional
+    public void unMarkProductAsSold(Long productID, String authHeader) throws Exception {
+        try {
+            productService.unMarkProductAsSold(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader));
+            salesHistoryRepository.deleteByProductId(productID);
+        } catch (Exception e) {
+            throw new Exception("Error unmarking product as sold: " + e.getMessage());
+        }
+    }
+
     public GetSalesHistoryResponse getSellerSalesHistory(String authHeader) throws Exception {
         try {
             return GetSalesHistoryResponse.builder().salesHistory(
@@ -96,11 +121,11 @@ public class SellerService {
 
     }
 
-    public GetSellersFromBuyerResponseDTO getSellersFromBuyer() throws Exception {
+    public GetSellersFromBuyerResponseDTO getSellersToBuyer() throws Exception {
         try {
             return GetSellersFromBuyerResponseDTO.builder()
                     .sellers(
-                            sellerMapper.sellerFromBuyerResponseDTOs(
+                            sellerMapper.sellersToBuyerResponseDTOs(
                                     sellerRepository.findAll()))
                     .build();
         } catch (Exception e) {

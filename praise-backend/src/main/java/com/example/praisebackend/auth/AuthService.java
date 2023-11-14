@@ -1,12 +1,13 @@
 package com.example.praisebackend.auth;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Date;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,10 @@ import com.example.praisebackend.auth.jwt.JwtTokenService;
 import com.example.praisebackend.dtos.mappers.UserMapper;
 import com.example.praisebackend.dtos.users.LoginRequestDTO;
 import com.example.praisebackend.dtos.users.RegisterRequestDTO;
-import com.example.praisebackend.models.PasswordResetToken;
+import com.example.praisebackend.models.VerificationToken;
 import com.example.praisebackend.models.user.User;
-import com.example.praisebackend.repositories.PasswordResetTokenRepository;
 import com.example.praisebackend.repositories.UserRepository;
+import com.example.praisebackend.repositories.VerificationTokenRepository;
 import com.example.praisebackend.services.EmailService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,13 +29,13 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
-
-    private final EmailService emailService;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenService jwtTokenService;
+
+    private final EmailService emailService;
 
     private final UserMapper userMapper;
 
@@ -58,6 +59,7 @@ public class AuthService {
                             requestDTO.getPassword()));
 
             UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(requestDTO.getEmail()));
+            validateAccountStatus(userPrincipal);
 
             return AuthResponseDTO
                     .builder()
@@ -69,19 +71,41 @@ public class AuthService {
         }
     }
 
-    public AuthResponseDTO registerUser(RegisterRequestDTO registerRequestDTO) throws Exception {
+    public void registerUser(RegisterRequestDTO registerRequestDTO) throws Exception {
         User newUser = userMapper.registerUserDTOtoUser(registerRequestDTO);
         checkIfUserAlreadyExists(newUser);
-        userRepository.save(newUser);
-        UserPrincipal userPrincipal = new UserPrincipal(newUser);
 
-        return AuthResponseDTO.builder().token(
-                jwtTokenService.generateToken(generateTokenClaims(userPrincipal), userPrincipal))
-                .role(userPrincipal.getRole())
-                .build();
+        newUser.setEnabled(false);
+        userRepository.save(newUser);
+
+        sendConfirmationEmail(newUser);
+
     }
 
-    public void checkIfUserAlreadyExists(User user) throws Exception {
+    public void confirmUserAccount(String token) throws Exception {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        if (verificationToken != null && !verificationToken.isExpired()) {
+            User user = verificationToken.getUser();
+            user.setEnabled(true);
+            userRepository.save(user);
+            verificationTokenRepository.delete(verificationToken);
+        } else {
+            throw new RuntimeException("Invalid or expired token");
+        }
+    }
+
+    private void sendConfirmationEmail(User newUser) throws Exception {
+        try {
+            VerificationToken verificationToken = createVerificationTokenForUser(newUser);
+            System.out.println("Token created...");
+            emailService.sendConfirmationEmail(newUser.getEmail(), verificationToken.getToken());
+        } catch (Exception e) {
+            throw new Exception("Error on sending confirmation email: " + e.getMessage());
+        }
+
+    }
+
+    private void checkIfUserAlreadyExists(User user) throws Exception {
         if (userAlreadyExists(user)) {
             throw new Exception("User already exists with email: " + user.getEmail());
         }
@@ -91,49 +115,20 @@ public class AuthService {
         return userRepository.findByEmail(user.getEmail()) != null;
     }
 
-    // create separated and dedicated service for reset password handling!!!
+    private VerificationToken createVerificationTokenForUser(User user) {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setUser(user);
+        verificationToken.setToken(token);
+        verificationToken.setExpiryDate(Instant.now().plus(1, ChronoUnit.DAYS));
 
-    public void requestPasswordRecovery(String email) throws Exception {
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("Email is required");
-        }
-
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            emailService.sendPasswordResetMail(email, generateToken());
-
-        } else {
-
-            throw new Exception("Email not found");
-        }
-
+        verificationTokenRepository.save(verificationToken);
+        return verificationToken;
     }
 
-    public void resetPassword(String token, String newPassword) throws Exception {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token);
-        if (isValidToken(resetToken)) {
-            User user = resetToken.getUser();
-            user.setPassword(newPassword);
-
-            userRepository.save(user);
-            resetToken.setUsed(true);
-            passwordResetTokenRepository.save(resetToken);
-        } else {
-            throw new Exception("Invalid Token");
+    private void validateAccountStatus(UserPrincipal userPrincipal) throws DisabledException {
+        if (!userPrincipal.isEnabled()) {
+            throw new DisabledException("Your account is not active. Please check your email to confirm your account.");
         }
-
     }
-
-    private String generateToken() {
-        SecureRandom random = new SecureRandom();
-        return new BigInteger(130, random).toString(32);
-    }
-
-    private boolean isValidToken(PasswordResetToken resetToken) {
-        if (resetToken == null || resetToken.isUsed() || resetToken.getExpiryDate().before(new Date())) {
-            return false;
-        }
-        return true;
-    }
-
 }

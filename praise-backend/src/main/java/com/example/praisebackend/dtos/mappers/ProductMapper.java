@@ -1,5 +1,6 @@
 package com.example.praisebackend.dtos.mappers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -27,6 +28,9 @@ public abstract class ProductMapper {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    SellerMapper sellerMapper;
+
     public Product createProductDTOToProduct(ProductRequestDTO productDTO) {
         System.out.println(productDTO);
         Product product = new Product();
@@ -37,15 +41,26 @@ public abstract class ProductMapper {
         product.setDescription(productDTO.getDescription());
         product.setImageLink(productDTO.getImageLink());
         product.setSeller(idToSeller(productDTO.getSellerID()));
-        product.setCreationTime(productDTO.getCreationTime());
+        product.setCreationTime(LocalDateTime.now());
         return product;
     }
 
     @Mapping(target = "seller", source = "sellerID", qualifiedByName = "idToSeller")
     public abstract Product updateProductDTOToProduct(ProductRequestDTO productDTO);
 
-    @Mapping(source = "seller", target = "sellerResponseDTO")
-    public abstract ProductResponseDTO productToProductResponseDTO(Product product);
+    public ProductResponseDTO productToProductResponseDTO(Product product) {
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
+        productResponseDTO.setCategory(product.getCategory());
+        productResponseDTO.setCondition(product.getCondition());
+        productResponseDTO.setDescription(product.getDescription());
+        productResponseDTO.setId(product.getId());
+        productResponseDTO.setImageLink(product.getImageLink());
+        productResponseDTO.setName(product.getName());
+        productResponseDTO.setPrice(product.getPrice());
+        productResponseDTO.setSeller(sellerMapper.sellerToBuyerResponseDTO(product.getSeller()));
+
+        return productResponseDTO;
+    }
 
     public abstract List<ProductResponseDTO> productsToProductResponseDTOs(List<Product> products);
 

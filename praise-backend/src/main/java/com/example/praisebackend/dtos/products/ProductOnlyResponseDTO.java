@@ -1,6 +1,7 @@
 package com.example.praisebackend.dtos.products;
 
 import com.example.praisebackend.models.product.Category;
+import com.example.praisebackend.models.product.Condition;
 
 import lombok.Data;
 
@@ -12,5 +13,6 @@ public class ProductOnlyResponseDTO {
     private String description;
     private String imageLink;
     private Category category;
+    private Condition condition;
 
 }

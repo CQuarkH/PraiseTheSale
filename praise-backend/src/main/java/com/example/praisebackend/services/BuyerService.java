@@ -66,7 +66,7 @@ public class BuyerService {
 
     public GetSellersFromBuyerResponseDTO getSellers() throws Exception {
         try {
-            return sellerService.getSellersFromBuyer();
+            return sellerService.getSellersToBuyer();
         } catch (Exception e) {
             throw new Exception("Error fetching sellers: " + e.getMessage());
         }
@@ -93,8 +93,9 @@ public class BuyerService {
 
     private CategoryResponseDTO categoryMapper(Category category) {
         return CategoryResponseDTO.builder()
-                .category(category)
+                .name(category)
                 .categoryDescription(category.getDescription())
+                .imageLink(category.getImageLink())
                 .productLength(productService.getProductLengthInCategory(category)).build();
 
     }

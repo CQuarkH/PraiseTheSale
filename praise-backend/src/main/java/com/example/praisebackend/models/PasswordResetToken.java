@@ -32,6 +32,4 @@ public class PasswordResetToken {
 
     private Date expiryDate;
 
-    private boolean used;
-
 }

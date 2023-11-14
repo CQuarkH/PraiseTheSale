@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.praisebackend.dtos.complaints.ResolveComplaintRequestDTO;
 import com.example.praisebackend.dtos.complaints.UpdateComplaintRequestDTO;
-import com.example.praisebackend.dtos.products.SuspendProductRequestDTO;
-import com.example.praisebackend.dtos.users.BanUserRequestDTO;
-import com.example.praisebackend.dtos.users.UnbanUserRequestDTO;
+import com.example.praisebackend.dtos.products.ProductStatusChangeRequestDTO;
+import com.example.praisebackend.dtos.users.UserStatusChangeRequestDTO;
 import com.example.praisebackend.services.AdminService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,10 +44,25 @@ public class AdminController {
     }
 
     @PutMapping("/products/{productId}/suspend-product")
-    public ResponseEntity<?> suspendProduct(@RequestBody SuspendProductRequestDTO suspendProductRequestDTO,
-            @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> suspendProduct(@RequestBody ProductStatusChangeRequestDTO suspendProductRequestDTO,
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long productId) {
         try {
+            suspendProductRequestDTO.setProductId(productId);
             adminService.suspendProduct(suspendProductRequestDTO, authHeader);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/products/{productId}/unsuspend-product")
+    public ResponseEntity<?> unsuspendProduct(@RequestBody ProductStatusChangeRequestDTO unsuspendProductRequestDTO,
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long productId) {
+        try {
+            unsuspendProductRequestDTO.setProductId(productId);
+            adminService.unsuspendProduct(unsuspendProductRequestDTO, authHeader);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -92,7 +106,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userId}/ban-user")
-    public ResponseEntity<?> banUser(@RequestBody BanUserRequestDTO banUserRequestDTO,
+    public ResponseEntity<?> banUser(@RequestBody UserStatusChangeRequestDTO banUserRequestDTO,
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long userId) {
         try {
@@ -105,7 +119,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userId}/unban-user")
-    public ResponseEntity<?> unBanUser(@RequestBody UnbanUserRequestDTO unbanUserRequestDTO,
+    public ResponseEntity<?> unBanUser(@RequestBody UserStatusChangeRequestDTO unbanUserRequestDTO,
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long userId) {
         try {

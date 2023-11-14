@@ -43,6 +43,7 @@ public abstract class User {
 
     private String description;
     private boolean isBanned;
+    private boolean isEnabled;
     private LocalDateTime creationTime;
     @OneToMany(mappedBy = "user")
     private List<AuditLog> logs;

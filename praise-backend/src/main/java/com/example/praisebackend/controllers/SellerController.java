@@ -27,14 +27,11 @@ public class SellerController {
     private final SellerService sellerService;
     private final ComplaintService complaintService;
 
-    @PutMapping
-
     @PostMapping("/products")
     public ResponseEntity<?> createProduct(@RequestBody ProductRequestDTO createProductRequest,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            sellerService.registerProduct(createProductRequest, authHeader);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(sellerService.registerProduct(createProductRequest, authHeader));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -52,13 +49,24 @@ public class SellerController {
 
     }
 
-    @PutMapping("/products")
-    public ResponseEntity<?> updateProduct(@RequestBody ProductRequestDTO updateProductRequest,
+    @GetMapping("/products/{productId}")
+    public ResponseEntity<?> getOwnProduct(@PathVariable Long productId,
             @RequestHeader("Authorization") String authHeader) {
         try {
+            return ResponseEntity.ok(sellerService.getOwnProduct(productId, authHeader));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<?> updateProduct(@RequestBody ProductRequestDTO updateProductRequest,
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long productId) {
+        try {
+            updateProductRequest.setId(productId);
             return ResponseEntity.ok(sellerService.updateProduct(updateProductRequest, authHeader));
         } catch (Exception e) {
-
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -79,6 +87,17 @@ public class SellerController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             sellerService.markProductAsSold(productId, authHeader);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/products/{productId}/unmark-as-sold")
+    public ResponseEntity<?> unMarkProductAsSold(@PathVariable Long productId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            sellerService.unMarkProductAsSold(productId, authHeader);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
