@@ -1,4 +1,4 @@
-package com.example.praisebackend.models;
+package com.example.praisebackend.models.tokens;
 
 import java.time.Instant;
 

@@ -1,7 +1,5 @@
 package com.example.praisebackend.auth;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,9 +53,9 @@ public class AuthController {
     }
 
     @PostMapping("/recover-password")
-    public ResponseEntity<?> requestPasswordRecovery(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> requestPasswordRecovery(@RequestParam String email) {
         try {
-            passwordResetService.requestPasswordRecovery(request.get("email"));
+            passwordResetService.requestPasswordRecovery(email);
             return new ResponseEntity<>("Password recovery email sent", HttpStatus.OK);
 
         } catch (Exception e) {
@@ -66,9 +64,9 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
         try {
-            passwordResetService.resetPassword(request.get("token"), request.get("newPassword"));
+            passwordResetService.resetPassword(resetPasswordRequestDTO);
             return new ResponseEntity<>("Password successfully reset", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

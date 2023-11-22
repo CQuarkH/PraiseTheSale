@@ -15,10 +15,11 @@ import com.example.praisebackend.auth.jwt.JwtTokenService;
 import com.example.praisebackend.dtos.mappers.UserMapper;
 import com.example.praisebackend.dtos.users.LoginRequestDTO;
 import com.example.praisebackend.dtos.users.RegisterRequestDTO;
-import com.example.praisebackend.models.VerificationToken;
+import com.example.praisebackend.exceptions.UserNotFoundException;
+import com.example.praisebackend.models.tokens.VerificationToken;
 import com.example.praisebackend.models.user.User;
 import com.example.praisebackend.repositories.UserRepository;
-import com.example.praisebackend.repositories.VerificationTokenRepository;
+import com.example.praisebackend.repositories.tokens.VerificationTokenRepository;
 import com.example.praisebackend.services.EmailService;
 
 import lombok.RequiredArgsConstructor;
@@ -46,8 +47,9 @@ public class AuthService {
         return claims;
     }
 
-    private String findUserAndGenerateToken(String email) {
-        UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(email));
+    private String findUserAndGenerateToken(String email) throws Exception {
+        UserPrincipal userPrincipal = new UserPrincipal(
+                userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email)));
         return jwtTokenService.generateToken(generateTokenClaims(userPrincipal), userPrincipal);
     }
 
@@ -58,7 +60,8 @@ public class AuthService {
                             requestDTO.getEmail(),
                             requestDTO.getPassword()));
 
-            UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(requestDTO.getEmail()));
+            UserPrincipal userPrincipal = new UserPrincipal(userRepository.findByEmail(requestDTO.getEmail())
+                    .orElseThrow(() -> new UserNotFoundException(requestDTO.getEmail())));
             validateAccountStatus(userPrincipal);
 
             return AuthResponseDTO
@@ -112,7 +115,7 @@ public class AuthService {
     }
 
     private boolean userAlreadyExists(User user) {
-        return userRepository.findByEmail(user.getEmail()) != null;
+        return userRepository.findByEmail(user.getEmail()).isPresent();
     }
 
     private VerificationToken createVerificationTokenForUser(User user) {

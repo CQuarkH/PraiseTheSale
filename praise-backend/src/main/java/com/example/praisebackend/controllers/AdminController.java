@@ -43,26 +43,22 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/products/{productId}/suspend-product")
-    public ResponseEntity<?> suspendProduct(@RequestBody ProductStatusChangeRequestDTO suspendProductRequestDTO,
-            @RequestHeader("Authorization") String authHeader,
-            @PathVariable Long productId) {
+    @GetMapping("/products/by-seller/{sellerId}")
+    public ResponseEntity<?> getProductsBySeller(@PathVariable Long sellerId) {
         try {
-            suspendProductRequestDTO.setProductId(productId);
-            adminService.suspendProduct(suspendProductRequestDTO, authHeader);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(adminService.getProductsBySeller(sellerId));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("/products/{productId}/unsuspend-product")
-    public ResponseEntity<?> unsuspendProduct(@RequestBody ProductStatusChangeRequestDTO unsuspendProductRequestDTO,
+    @PutMapping("/products/{productId}/suspend")
+    public ResponseEntity<?> suspendProduct(@RequestBody ProductStatusChangeRequestDTO productStatusChangeRequestDTO,
             @RequestHeader("Authorization") String authHeader,
             @PathVariable Long productId) {
         try {
-            unsuspendProductRequestDTO.setProductId(productId);
-            adminService.unsuspendProduct(unsuspendProductRequestDTO, authHeader);
+            productStatusChangeRequestDTO.setProductId(productId);
+            adminService.updateProductSuspensionStatus(productStatusChangeRequestDTO, authHeader);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -111,22 +107,8 @@ public class AdminController {
             @PathVariable Long userId) {
         try {
             banUserRequestDTO.setUserId(userId);
-            adminService.banUser(banUserRequestDTO, authHeader);
+            adminService.updateUserBanStatus(banUserRequestDTO, authHeader);
             return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PutMapping("/users/{userId}/unban-user")
-    public ResponseEntity<?> unBanUser(@RequestBody UserStatusChangeRequestDTO unbanUserRequestDTO,
-            @RequestHeader("Authorization") String authHeader,
-            @PathVariable Long userId) {
-        try {
-            unbanUserRequestDTO.setUserId(userId);
-            adminService.unbanUser(unbanUserRequestDTO, authHeader);
-            return ResponseEntity.ok().build();
-
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -144,16 +126,7 @@ public class AdminController {
     @GetMapping("/complaints")
     public ResponseEntity<?> getAllComplaints() {
         try {
-            return ResponseEntity.ok(adminService.getAvailableComplaints());
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/complaints/resolved")
-    public ResponseEntity<?> getResolvedComplaints() {
-        try {
-            return ResponseEntity.ok(adminService.getResolvedComplaints());
+            return ResponseEntity.ok(adminService.getComplaints());
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

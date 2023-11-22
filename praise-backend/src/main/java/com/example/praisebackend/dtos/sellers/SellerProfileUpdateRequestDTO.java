@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class SellerProfileUpdateRequestDTO extends ProfileUpdateRequestDTO {
-    private String contactEmail;
     private String contactPhone;
 
 }

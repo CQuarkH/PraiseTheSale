@@ -38,46 +38,23 @@ public class ProductService {
         }
     }
 
-    public void suspendProduct(ProductStatusChangeRequestDTO suspendProductRequestDTO) throws Exception {
-        try {
-            Product product = getProductByID(suspendProductRequestDTO.getProductId());
-            product.setSuspended(true);
-            productRepository.save(product);
-            auditLogService.logSuspendedProduct(suspendProductRequestDTO.getAdminId(),
-                    suspendProductRequestDTO.getProductId(), suspendProductRequestDTO.getReason());
-        } catch (Exception e) {
-            throw new Exception("Error on product suspending: " + e.getMessage());
-
-        }
-    }
-
-    public void unsuspendProduct(ProductStatusChangeRequestDTO unsuspendProductRequestDTO) throws Exception {
-        try {
-            Product product = getProductByID(unsuspendProductRequestDTO.getProductId());
-            product.setSuspended(false);
-            productRepository.save(product);
-            auditLogService.logUnsuspendProduct(unsuspendProductRequestDTO.getAdminId(),
-                    unsuspendProductRequestDTO.getProductId(), unsuspendProductRequestDTO.getReason());
-        } catch (Exception e) {
-            throw new Exception("Error on product unsuspending: " + e.getMessage());
-
-        }
-    }
-
-    public ProductResponseDTO updateProduct(ProductRequestDTO updateProductRequest)
+    public void updateProductSuspensionStatus(ProductStatusChangeRequestDTO requestDTO)
             throws Exception {
         try {
-            Product existingProduct = getProductByID(updateProductRequest.getId());
+            Product product = getProductByID(requestDTO.getProductId());
+            product.setSuspended(requestDTO.isSuspend());
+            productRepository.save(product);
 
-            productMapper.updateExistingProductFromDTO(updateProductRequest, existingProduct);
-
-            return productMapper.productToProductResponseDTO(
-                    productRepository.save(productMapper.updateProductDTOToProduct(updateProductRequest)));
-
+            if (requestDTO.isSuspend()) {
+                auditLogService.logSuspendedProduct(requestDTO.getAdminId(), requestDTO.getProductId(),
+                        requestDTO.getReason());
+            } else {
+                auditLogService.logUnsuspendProduct(requestDTO.getAdminId(), requestDTO.getProductId(),
+                        requestDTO.getReason());
+            }
         } catch (Exception e) {
-            throw new Exception("Error on product updating: " + e.getMessage());
+            throw new Exception("Error on product suspension update: " + e.getMessage());
         }
-
     }
 
     public void deleteProduct(Long productID, Long sellerID) throws Exception {
@@ -86,6 +63,22 @@ public class ProductService {
             auditLogService.logDeleteProduct(sellerID, productID);
         } catch (Exception e) {
             throw new Exception("Error on product deleting: " + e.getMessage());
+        }
+
+    }
+
+    public ProductOnlyResponseDTO updateProduct(ProductRequestDTO updateProductRequest)
+            throws Exception {
+        try {
+            Product existingProduct = getProductByID(updateProductRequest.getId());
+
+            productMapper.updateExistingProductFromDTO(updateProductRequest, existingProduct);
+
+            return productMapper.productToProductOnlyResponseDTO(
+                    productRepository.save(productMapper.updateProductDTOToProduct(updateProductRequest)));
+
+        } catch (Exception e) {
+            throw new Exception("Error on product updating: " + e.getMessage());
         }
 
     }
@@ -117,7 +110,8 @@ public class ProductService {
     public GetProductsOnlyResponseDTO getAvailableProductsBySeller(Long sellerID) {
         return GetProductsOnlyResponseDTO.builder()
                 .products(productMapper.productsToProductOnlyResponseDTOs(
-                        productRepository.findBySellerIdAndIsSoldFalseAndIsSuspendedFalse(sellerID)))
+                        productRepository
+                                .findBySellerIdAndIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc(sellerID)))
                 .build();
     }
 
@@ -125,13 +119,15 @@ public class ProductService {
         return GetProductsResponseDTO.builder()
                 .products(
                         productMapper.productsToProductResponseDTOs(
-                                productRepository.findByIsSoldFalseAndIsSuspendedFalse()))
+                                productRepository.findByIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc()))
                 .build();
     }
 
     public GetProductsResponseDTO getAllProducts() {
         return GetProductsResponseDTO.builder()
-                .products(productMapper.productsToProductResponseDTOs(productRepository.findAll())).build();
+                .products(productMapper
+                        .productsToProductResponseDTOs(productRepository.findByIsSoldFalseOrderByCreationTimeDesc()))
+                .build();
     }
 
     public GetProductsResponseDTO getWeeklyProducts() {
@@ -144,12 +140,14 @@ public class ProductService {
     public GetProductsResponseDTO getProductsByCategory(Category category) {
         return GetProductsResponseDTO.builder()
                 .products(productMapper.productsToProductResponseDTOs(
-                        productRepository.findByCategory(category)))
+                        productRepository
+                                .findByCategoryAndIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc(category)))
                 .build();
     }
 
     public int getProductLengthInCategory(Category category) {
-        return productRepository.findByCategory(category).size();
+        return productRepository.findByCategoryAndIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc(category)
+                .size();
     }
 
     public ProductResponseDTO getProductDTOByID(Long id) throws Exception {

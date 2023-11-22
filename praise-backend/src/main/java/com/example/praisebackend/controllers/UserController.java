@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.praisebackend.dtos.sellers.SellerProfileUpdateRequestDTO;
 import com.example.praisebackend.dtos.users.ProfileUpdateRequestDTO;
+import com.example.praisebackend.services.SellerService;
 import com.example.praisebackend.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
+    private final SellerService sellerService;
 
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@RequestHeader("Authorization") String authHeader) {
@@ -33,12 +36,32 @@ public class UserController {
 
     }
 
+    @GetMapping("/seller-profile")
+    public ResponseEntity<?> getSellerProfile(@RequestHeader("Authorization") String authHeader) {
+        try {
+            return ResponseEntity.ok(sellerService.getSellerProfile(authHeader));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/profile")
-    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authHeader,
+    public ResponseEntity<?> updateUserProfile(@RequestHeader("Authorization") String authHeader,
             @RequestBody ProfileUpdateRequestDTO userUpdateDTO) {
         try {
             userUpdateDTO.setAuthHeader(authHeader);
             return ResponseEntity.ok(userService.updateUserProfile(userUpdateDTO));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/seller-profile")
+    public ResponseEntity<?> updateSellerProfile(@RequestHeader("Authorization") String authHeader,
+            @RequestBody SellerProfileUpdateRequestDTO sellerProfileUpdateRequestDTO) {
+        try {
+            return ResponseEntity.ok(sellerService.updateSellerProfile(sellerProfileUpdateRequestDTO, authHeader));
+
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -2,6 +2,7 @@ package com.example.praisebackend.dtos.mappers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.example.praisebackend.dtos.products.ProductOnlyResponseDTO;
 import com.example.praisebackend.dtos.products.ProductRequestDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
+import com.example.praisebackend.dtos.products.RelatedProductResponseDTO;
+import com.example.praisebackend.models.product.Category;
 import com.example.praisebackend.models.product.Product;
 import com.example.praisebackend.models.user.Seller;
 import com.example.praisebackend.repositories.ProductRepository;
@@ -58,12 +61,35 @@ public abstract class ProductMapper {
         productResponseDTO.setName(product.getName());
         productResponseDTO.setPrice(product.getPrice());
         productResponseDTO.setSeller(sellerMapper.sellerToBuyerResponseDTO(product.getSeller()));
+        productResponseDTO.setSuspended(product.isSuspended());
+        productResponseDTO.setRelatedProducts(
+                findRelatedProducts(product.getSeller().getId(), product.getCategory(), product.getId()));
 
         return productResponseDTO;
     }
 
+    private List<RelatedProductResponseDTO> findRelatedProducts(Long sellerId, Category category,
+            Long excludeProductId) {
+        List<Product> relatedProducts = productRepository.findTop5BySellerIdAndCategoryExcludingProductId(sellerId,
+                category, excludeProductId);
+        return relatedProducts.stream()
+                .map(this::productToRelatedProductResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Mapping(target = "creationTime", ignore = true)
+    public RelatedProductResponseDTO productToRelatedProductResponseDTO(Product product) {
+        RelatedProductResponseDTO relatedProductDTO = new RelatedProductResponseDTO();
+        relatedProductDTO.setId(product.getId());
+        relatedProductDTO.setName(product.getName());
+        relatedProductDTO.setImageLink(product.getImageLink());
+        relatedProductDTO.setPrice(product.getPrice());
+        return relatedProductDTO;
+    }
+
     public abstract List<ProductResponseDTO> productsToProductResponseDTOs(List<Product> products);
 
+    @Mapping(target = "creationTime", ignore = true)
     @Mapping(target = "seller", source = "sellerID", qualifiedByName = "idToSeller")
     public abstract void updateExistingProductFromDTO(ProductRequestDTO dto, @MappingTarget Product existingProduct);
 

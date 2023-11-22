@@ -20,5 +20,6 @@ public class ComplaintResponseDTO {
     private ProductOnlyResponseDTO product;
     private UserResponseDTO targetUser;
     private UserResponseDTO user;
+    private String resolutionDetails;
 
 }

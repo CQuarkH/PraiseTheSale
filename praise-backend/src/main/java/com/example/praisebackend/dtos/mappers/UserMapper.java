@@ -42,6 +42,7 @@ public abstract class UserMapper {
         extendedUserResponseDTO.setDescription(user.getDescription());
         extendedUserResponseDTO.setName(user.getName());
         extendedUserResponseDTO.setAuditLogs(getAuditLogsResponseDTO);
+        extendedUserResponseDTO.setImageLink(user.getImageLink());
 
         return extendedUserResponseDTO;
     }
@@ -73,6 +74,8 @@ public abstract class UserMapper {
         user.setPassword(encodePassword(registerRequestDTO.getPassword()));
         user.setRole(registerRequestDTO.getRole());
         user.setCreationTime(LocalDateTime.now());
+        user.setImageLink(
+                "https://firebasestorage.googleapis.com/v0/b/praisethesale-c921f.appspot.com/o/users%2FDEFAUL_PROFILE.webp?alt=media&token=ba35a6f8-4db0-4e89-a24d-9df87db98721");
     }
 
     @Named("encodePassword")

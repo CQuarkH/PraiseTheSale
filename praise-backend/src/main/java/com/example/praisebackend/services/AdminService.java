@@ -5,10 +5,9 @@ import org.springframework.stereotype.Service;
 import com.example.praisebackend.auth.jwt.JwtTokenService;
 import com.example.praisebackend.dtos.complaints.ComplaintResponseDTO;
 import com.example.praisebackend.dtos.complaints.GetComplaintsResponseDTO;
-import com.example.praisebackend.dtos.complaints.GetResolvedComplaintsResponseDTO;
 import com.example.praisebackend.dtos.complaints.ResolveComplaintRequestDTO;
-import com.example.praisebackend.dtos.complaints.ResolveComplaintResponseDTO;
 import com.example.praisebackend.dtos.complaints.UpdateComplaintRequestDTO;
+import com.example.praisebackend.dtos.products.GetProductsOnlyResponseDTO;
 import com.example.praisebackend.dtos.products.GetProductsResponseDTO;
 import com.example.praisebackend.dtos.products.ProductResponseDTO;
 import com.example.praisebackend.dtos.products.ProductStatusChangeRequestDTO;
@@ -29,6 +28,7 @@ public class AdminService {
     private final SellerService sellerService;
     private final JwtTokenService jwtTokenService;
     private final ComplaintService complaintService;
+    private final EmailService emailService;
 
     public GetProductsResponseDTO getAllProducts() throws Exception {
         try {
@@ -47,23 +47,33 @@ public class AdminService {
         }
     }
 
-    public void suspendProduct(ProductStatusChangeRequestDTO suspendProductRequestDTO, String authHeader)
-            throws Exception {
+    public GetProductsOnlyResponseDTO getProductsBySeller(Long sellerId) throws Exception {
         try {
-            suspendProductRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            productService.suspendProduct(suspendProductRequestDTO);
+            return productService.getAvailableProductsBySeller(sellerId);
         } catch (Exception e) {
-            throw new Exception("Error on product suspending: " + e.getMessage());
+            throw new Exception("Error on seller's products fetching: " + e.getMessage());
         }
     }
 
-    public void unsuspendProduct(ProductStatusChangeRequestDTO unsuspendProductRequestDTO, String authHeader)
+    public void updateProductSuspensionStatus(ProductStatusChangeRequestDTO suspendProductRequestDTO, String authHeader)
             throws Exception {
         try {
-            unsuspendProductRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            productService.unsuspendProduct(unsuspendProductRequestDTO);
+            suspendProductRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
+
+            productService.updateProductSuspensionStatus(suspendProductRequestDTO);
+
+            if (suspendProductRequestDTO.isSuspend()) {
+                emailService.sendProductSuspensionEmail(suspendProductRequestDTO.getSellerEmail(),
+                        productService.getProductByID(suspendProductRequestDTO.getProductId()),
+                        suspendProductRequestDTO.getReason());
+            } else {
+                emailService.sendProductReactivationEmail(suspendProductRequestDTO.getSellerEmail(),
+                        productService.getProductByID(suspendProductRequestDTO.getProductId()),
+                        suspendProductRequestDTO.getReason());
+            }
+
         } catch (Exception e) {
-            throw new Exception("Error on product unsuspending: " + e.getMessage());
+            throw new Exception("Error on product suspension update: " + e.getMessage());
         }
     }
 
@@ -110,40 +120,25 @@ public class AdminService {
 
     }
 
-    public void banUser(UserStatusChangeRequestDTO banUserRequestDTO, String authHeader) throws Exception {
+    public void updateUserBanStatus(UserStatusChangeRequestDTO banUserRequestDTO, String authHeader) throws Exception {
         try {
             banUserRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            userService.banUser(banUserRequestDTO);
+            userService.updateUserBanStatus(banUserRequestDTO);
+            emailService.sendUserStatusChangeEmail(banUserRequestDTO.getUserEmail(), banUserRequestDTO.getUserId(),
+                    banUserRequestDTO.getReason(), banUserRequestDTO.isBan());
+
         } catch (Exception e) {
-            throw new Exception("Error banning user: " + e.getMessage());
+            throw new Exception("Error updating user status: " + e.getMessage());
         }
     }
 
-    public void unbanUser(UserStatusChangeRequestDTO unbanUserRequestDTO, String authHeader) throws Exception {
+    public GetComplaintsResponseDTO getComplaints() throws Exception {
         try {
-            unbanUserRequestDTO.setAdminId(jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            userService.unbanUser(unbanUserRequestDTO);
-        } catch (Exception e) {
-            throw new Exception("Error unbanning user: " + e.getMessage());
-        }
-
-    }
-
-    public GetComplaintsResponseDTO getAvailableComplaints() throws Exception {
-        try {
-            return complaintService.getAvailableComplaints();
+            return complaintService.getComplaints();
         } catch (Exception e) {
             throw new Exception("Error fetching available complaints: " + e.getMessage());
         }
 
-    }
-
-    public GetResolvedComplaintsResponseDTO getResolvedComplaints() throws Exception {
-        try {
-            return complaintService.getResolvedComplaints();
-        } catch (Exception e) {
-            throw new Exception("Error fetching resolved complaints: " + e.getMessage());
-        }
     }
 
     public ComplaintResponseDTO getComplaintByID(Long complaintID) throws Exception {
@@ -165,7 +160,7 @@ public class AdminService {
 
     }
 
-    public ResolveComplaintResponseDTO resolveComplaint(ResolveComplaintRequestDTO resolveComplaintRequestDTO,
+    public ComplaintResponseDTO resolveComplaint(ResolveComplaintRequestDTO resolveComplaintRequestDTO,
             String authHeader)
             throws Exception {
         try {

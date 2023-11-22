@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.praisebackend.dtos.complaints.ComplaintRequestDTO;
 import com.example.praisebackend.dtos.complaints.ComplaintResponseDTO;
-import com.example.praisebackend.dtos.complaints.ResolveComplaintResponseDTO;
 import com.example.praisebackend.models.complaint.Complaint;
 import com.example.praisebackend.models.complaint.ComplaintStatus;
 
@@ -43,23 +42,14 @@ public class ComplaintMapper {
                 .complaintStatus(complaint.getStatus())
                 .product(productMapper.productToProductOnlyResponseDTO(complaint.getProduct()))
                 .targetUser(userMapper.userToUserDTO(complaint.getTargetUser()))
+                .resolutionDetails(complaint.getResolutionDetails())
                 .user(userMapper.userToUserDTO(complaint.getUser()))
                 .build();
-    }
-
-    public ResolveComplaintResponseDTO complaintToResolveComplaintResponseDTO(Complaint complaint) {
-        return ResolveComplaintResponseDTO.builder()
-                .complaint(complaintToComplaintResponseDTO(complaint))
-                .resolutionDetails(complaint.getResolutionDetails()).build();
     }
 
     public List<ComplaintResponseDTO> complaintsToComplaintResponseDTOs(List<Complaint> complaints) {
         return complaints.stream()
                 .map(this::complaintToComplaintResponseDTO)
                 .collect(Collectors.toList());
-    }
-
-    public List<ResolveComplaintResponseDTO> complaintsToResolveComplaintResponseDTOs(List<Complaint> complaints) {
-        return complaints.stream().map(this::complaintToResolveComplaintResponseDTO).collect(Collectors.toList());
     }
 }

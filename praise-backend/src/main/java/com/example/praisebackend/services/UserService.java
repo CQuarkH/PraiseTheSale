@@ -2,6 +2,7 @@ package com.example.praisebackend.services;
 
 import com.example.praisebackend.auth.jwt.JwtTokenService;
 import com.example.praisebackend.dtos.mappers.UserMapper;
+import com.example.praisebackend.dtos.sellers.SellerProfileUpdateRequestDTO;
 import com.example.praisebackend.dtos.users.ExtendedUserResponseDTO;
 import com.example.praisebackend.dtos.users.GetUsersResponseDTO;
 import com.example.praisebackend.dtos.users.ProfileUpdateRequestDTO;
@@ -12,6 +13,7 @@ import com.example.praisebackend.models.Role;
 import com.example.praisebackend.models.user.User;
 import com.example.praisebackend.repositories.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -29,32 +31,23 @@ public class UserService {
 
     private final JwtTokenService jwtTokenService;
 
-    public void banUser(UserStatusChangeRequestDTO banUserRequestDTO) throws Exception {
+    public void updateUserBanStatus(UserStatusChangeRequestDTO banUserRequestDTO) throws Exception {
         try {
             User user = getUserByID(banUserRequestDTO.getUserId());
-            user.setBanned(true);
+            user.setBanned(banUserRequestDTO.isBan());
             userRepository.save(user);
 
-            auditLogService.logUserBanned(banUserRequestDTO.getAdminId(), banUserRequestDTO.getUserId(),
-                    banUserRequestDTO.getReason());
-        } catch (UserNotFoundException e) {
-            throw new Exception("Error banning user: " + e.getMessage());
-        }
-    }
-
-    public void unbanUser(UserStatusChangeRequestDTO unbanUserRequestDTO) throws Exception {
-        try {
-            User user = getUserByID(unbanUserRequestDTO.getUserId());
-            user.setBanned(false);
-            userRepository.save(user);
-
-            auditLogService.logUserUnbanned(unbanUserRequestDTO.getAdminId(), unbanUserRequestDTO.getUserId(),
-                    unbanUserRequestDTO.getReason());
+            if (banUserRequestDTO.isBan()) {
+                auditLogService.logUserBanned(banUserRequestDTO.getAdminId(), banUserRequestDTO.getUserId(),
+                        banUserRequestDTO.getReason());
+            } else {
+                auditLogService.logUserUnbanned(banUserRequestDTO.getAdminId(), banUserRequestDTO.getUserId(),
+                        banUserRequestDTO.getReason());
+            }
 
         } catch (UserNotFoundException e) {
-            throw new Exception("Error unbanning user: " + e.getMessage());
+            throw new Exception("Error updating user status: " + e.getMessage());
         }
-
     }
 
     public UserResponseDTO getUserProfileByHeader(String authHeader) throws Exception {
@@ -71,13 +64,20 @@ public class UserService {
 
     public UserResponseDTO updateUserProfile(ProfileUpdateRequestDTO userUpdateDTO) throws Exception {
         Long userID = jwtTokenService.getUserIDFromHeaderToken(userUpdateDTO.getAuthHeader());
+        String userRole = jwtTokenService.getUserRoleFromHeaderToken(userUpdateDTO.getAuthHeader());
         try {
             User user = getUserByID(userID);
             user.setName(userUpdateDTO.getName());
             user.setDescription(userUpdateDTO.getDescription());
             user.setImageLink(userUpdateDTO.getImageLink());
-
             userRepository.save(user);
+
+            if (userRole.equals(Role.SELLER.toString()) && userUpdateDTO instanceof SellerProfileUpdateRequestDTO) {
+                System.out.println("Updating seller!");
+            } else {
+
+            }
+
             return userMapper.userToUserDTO(user);
 
         } catch (Exception e) {
@@ -138,6 +138,11 @@ public class UserService {
         } catch (Exception e) {
             throw new Exception("Error on extended user fetching: " + e.getMessage());
         }
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found."));
     }
 
     private User getUserByID(Long userId) throws UserNotFoundException {

@@ -21,7 +21,7 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    private LogType actionType;
+    private ActionType actionType;
     private LocalDateTime dateTime;
     private String description;
     @ManyToOne

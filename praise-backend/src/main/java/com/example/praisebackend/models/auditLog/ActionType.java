@@ -1,6 +1,6 @@
 package com.example.praisebackend.models.auditLog;
 
-public enum LogType {
+public enum ActionType {
     REQUEST_SELLER_DATA,
     USER_BANNED,
     USER_UNBANNED,

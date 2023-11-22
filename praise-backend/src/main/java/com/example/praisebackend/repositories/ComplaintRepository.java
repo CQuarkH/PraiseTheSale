@@ -14,9 +14,13 @@ import com.example.praisebackend.models.complaint.ComplaintStatus;
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     List<Complaint> findByUserId(Long userId);
 
+    List<Complaint> findByUserIdOrderByStatusAscDateTimeDesc(Long userId);
+
     List<Complaint> findByStatus(ComplaintStatus status);
 
     @Query("SELECT c FROM Complaint c WHERE c.status != :status")
     List<Complaint> findAllExceptStatus(@Param("status") ComplaintStatus status);
+
+    List<Complaint> findAllByOrderByStatusAscDateTimeDesc();
 
 }

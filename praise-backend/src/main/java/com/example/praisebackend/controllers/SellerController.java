@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.praisebackend.dtos.complaints.ComplaintRequestDTO;
 import com.example.praisebackend.dtos.products.ProductRequestDTO;
+import com.example.praisebackend.dtos.sellers.MarkProductAsSoldRequestDTO;
 import com.example.praisebackend.services.ComplaintService;
 import com.example.praisebackend.services.SellerService;
 
@@ -84,9 +85,11 @@ public class SellerController {
 
     @PutMapping("/products/{productId}/mark-as-sold")
     public ResponseEntity<?> markProductAsSold(@PathVariable Long productId,
+            @RequestBody MarkProductAsSoldRequestDTO markProductAsSoldRequestDTO,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            sellerService.markProductAsSold(productId, authHeader);
+            markProductAsSoldRequestDTO.setProductId(productId);
+            sellerService.markProductAsSold(markProductAsSoldRequestDTO, authHeader);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -126,8 +129,17 @@ public class SellerController {
     public ResponseEntity<?> createComplaint(@RequestBody ComplaintRequestDTO complaintRequestDTO,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            complaintService.createComplaint(complaintRequestDTO, authHeader);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(complaintService.createSellerComplaint(complaintRequestDTO, authHeader));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/complaints/{complaintId}")
+    public ResponseEntity<?> getOwnComplaint(@PathVariable Long complaintId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            return ResponseEntity.ok(complaintService.getOwnComplaint(complaintId, authHeader));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

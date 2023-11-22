@@ -6,5 +6,7 @@ import lombok.Data;
 public class UserStatusChangeRequestDTO {
     private Long adminId;
     private Long userId;
+    private String userEmail;
     private String reason;
+    private boolean ban;
 }

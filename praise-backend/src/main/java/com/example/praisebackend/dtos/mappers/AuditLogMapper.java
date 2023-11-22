@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.praisebackend.dtos.auditlogs.AuditLogResponseDTO;
 import com.example.praisebackend.models.auditLog.AuditLog;
-import com.example.praisebackend.models.auditLog.LogType;
+import com.example.praisebackend.models.auditLog.ActionType;
 
 @Mapper(componentModel = "spring")
 public abstract class AuditLogMapper {
@@ -17,7 +17,7 @@ public abstract class AuditLogMapper {
     @Autowired
     private UserMapper userMapper;
 
-    public AuditLog auditLogFactory(Long userID, LogType logType, String description) {
+    public AuditLog auditLogFactory(Long userID, ActionType logType, String description) {
         AuditLog auditLog = new AuditLog();
         auditLog.setUser(userMapper.idToUser(userID));
         auditLog.setActionType(logType);

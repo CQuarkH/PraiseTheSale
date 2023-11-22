@@ -16,6 +16,7 @@ public class ExtendedUserResponseDTO {
     private String description;
     private boolean isBanned;
     private LocalDateTime creationTime;
+    private String imageLink;
     private GetAuditLogsResponseDTO auditLogs;
 
 }

@@ -10,5 +10,6 @@ import lombok.EqualsAndHashCode;
 public class SellerResponseDTO extends UserResponseDTO {
     private String contactPhone;
     private double rating;
+    private int productLength;
 
 }

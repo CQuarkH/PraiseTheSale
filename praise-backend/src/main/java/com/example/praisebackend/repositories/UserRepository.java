@@ -10,11 +10,12 @@ import com.example.praisebackend.models.user.User;
 
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     @Query("SELECT u FROM User u WHERE u.creationTime >= :date AND u.role != :role")
     List<User> findUsersCreatedAfterWithoutRole(@Param("date") LocalDateTime localDateTime, @Param("role") Role role);

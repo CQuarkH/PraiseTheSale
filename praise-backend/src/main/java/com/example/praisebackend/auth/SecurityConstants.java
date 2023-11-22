@@ -5,8 +5,8 @@ public class SecurityConstants {
         public static final String[] PUBLIC_URLS = {
                         "/api/auth/login",
                         "/api/auth/register",
-                        "/api/auth/recoverPassword",
-                        "/api/auth/resetPasssword",
+                        "/api/auth/recover-password",
+                        "/api/auth/reset-password",
                         "/api/auth/confirm-account",
                         "/api/buyer/products/**",
                         "/api/buyer/sellers/**",

@@ -5,6 +5,7 @@ import com.example.praisebackend.models.product.Category;
 import com.example.praisebackend.models.product.Condition;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
 public class ProductResponseDTO {
@@ -16,5 +17,7 @@ public class ProductResponseDTO {
     private Category category;
     private Condition condition;
     private SellerToBuyerResponseDTO seller;
+    private boolean isSuspended;
+    private List<RelatedProductResponseDTO> relatedProducts;
 
 }

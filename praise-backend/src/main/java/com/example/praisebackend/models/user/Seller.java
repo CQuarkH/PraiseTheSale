@@ -15,6 +15,16 @@ import lombok.ToString;
 @DiscriminatorValue("SELLER")
 public class Seller extends User {
     private String contactPhone;
-    private double rating;
+    private double totalRatingSum = 0;
+    private int ratingCount = 0;
+
+    public void addRating(double rating) {
+        this.totalRatingSum += rating;
+        this.ratingCount++;
+    }
+
+    public double getAverageRating() {
+        return (ratingCount > 0) ? totalRatingSum / ratingCount : 0;
+    }
 
 }

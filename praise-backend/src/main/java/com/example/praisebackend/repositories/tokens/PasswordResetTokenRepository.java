@@ -1,9 +1,9 @@
-package com.example.praisebackend.repositories;
+package com.example.praisebackend.repositories.tokens;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.praisebackend.models.PasswordResetToken;
+import com.example.praisebackend.models.tokens.PasswordResetToken;
 
 @Repository
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {

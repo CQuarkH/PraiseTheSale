@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.praisebackend.dtos.buyers.RequestSellerDataDTO;
@@ -16,6 +17,7 @@ import com.example.praisebackend.dtos.complaints.ComplaintRequestDTO;
 import com.example.praisebackend.models.product.Category;
 import com.example.praisebackend.services.BuyerService;
 import com.example.praisebackend.services.ComplaintService;
+import com.example.praisebackend.services.RateSellerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class BuyerController {
 
     private final BuyerService buyerService;
     private final ComplaintService complaintService;
+    private final RateSellerService rateSellerService;
 
     @PostMapping("/request-seller-data")
     public ResponseEntity<?> requestSellerData(
@@ -94,6 +97,16 @@ public class BuyerController {
         }
     }
 
+    @PostMapping("/rate-seller")
+    public ResponseEntity<?> rateSeller(@RequestParam String token, @RequestParam double rating) {
+        try {
+            rateSellerService.rateSeller(token, rating);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/complaints")
     public ResponseEntity<?> getComplaints(@RequestHeader("Authorization") String authHeader) {
         try {
@@ -103,12 +116,21 @@ public class BuyerController {
         }
     }
 
+    @GetMapping("/complaints/{complaintId}")
+    public ResponseEntity<?> getOwnComplaint(@PathVariable Long complaintId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            return ResponseEntity.ok(complaintService.getOwnComplaint(complaintId, authHeader));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/complaints")
     public ResponseEntity<?> createComplaint(@RequestBody ComplaintRequestDTO complaintRequestDTO,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            complaintService.createComplaint(complaintRequestDTO, authHeader);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(complaintService.createBuyerComplaint(complaintRequestDTO, authHeader));
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

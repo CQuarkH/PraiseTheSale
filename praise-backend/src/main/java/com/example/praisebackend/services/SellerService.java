@@ -12,11 +12,16 @@ import com.example.praisebackend.dtos.products.ProductResponseDTO;
 import com.example.praisebackend.dtos.sellers.GetSalesHistoryResponse;
 import com.example.praisebackend.dtos.sellers.GetSellersFromBuyerResponseDTO;
 import com.example.praisebackend.dtos.sellers.GetSellersResponseDTO;
+import com.example.praisebackend.dtos.sellers.MarkProductAsSoldRequestDTO;
+import com.example.praisebackend.dtos.sellers.SellerProfileUpdateRequestDTO;
+import com.example.praisebackend.dtos.sellers.SellerResponseDTO;
 import com.example.praisebackend.models.user.SalesHistory;
+import com.example.praisebackend.models.user.Seller;
+import com.example.praisebackend.models.user.User;
 import com.example.praisebackend.repositories.SalesHistoryRepository;
 import com.example.praisebackend.repositories.SellerRepository;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -27,12 +32,41 @@ public class SellerService {
 
     private final ProductService productService;
     private final JwtTokenService jwtTokenService;
+    private final AuditLogService auditLogService;
+    private final UserService userService;
+    private final RateSellerService rateSellerService;
 
     private final SalesHistoryRepository salesHistoryRepository;
     private final SellerRepository sellerRepository;
 
     private final SalesHistoryMapper salesHistoryMapper;
     private final SellerMapper sellerMapper;
+
+    public SellerResponseDTO getSellerProfile(String authHeader) throws Exception {
+        try {
+            Seller seller = getSellerByID(jwtTokenService.getUserIDFromHeaderToken(authHeader));
+            return sellerMapper.sellerToSellerResponseDTO(seller);
+
+        } catch (Exception e) {
+            throw new Exception("Error fetching seller's profile: " + e.getMessage());
+        }
+    }
+
+    public SellerResponseDTO updateSellerProfile(SellerProfileUpdateRequestDTO sellerProfileUpdateRequestDTO,
+            String authHeader) throws Exception {
+        try {
+            Seller seller = getSellerByID(jwtTokenService.getUserIDFromHeaderToken(authHeader));
+            seller.setDescription(sellerProfileUpdateRequestDTO.getDescription());
+            seller.setContactPhone(sellerProfileUpdateRequestDTO.getContactPhone());
+            seller.setImageLink(sellerProfileUpdateRequestDTO.getImageLink());
+            seller.setName(sellerProfileUpdateRequestDTO.getName());
+
+            return sellerMapper.sellerToSellerResponseDTO(sellerRepository.save(seller));
+
+        } catch (Exception e) {
+            throw new Exception("Error updating seller's profile: " + e.getMessage());
+        }
+    }
 
     public ProductOnlyResponseDTO registerProduct(ProductRequestDTO createProductRequest, String authHeader)
             throws Exception {
@@ -61,7 +95,7 @@ public class SellerService {
         }
     }
 
-    public ProductResponseDTO updateProduct(ProductRequestDTO updateProductRequest, String authHeader)
+    public ProductOnlyResponseDTO updateProduct(ProductRequestDTO updateProductRequest, String authHeader)
             throws Exception {
         try {
             updateProductRequest.setSellerID(jwtTokenService.getUserIDFromHeaderToken(authHeader));
@@ -84,16 +118,18 @@ public class SellerService {
 
     }
 
-    public void markProductAsSold(Long productID, String authHeader) throws Exception {
-        try {
-            productService.markProductAsSold(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            salesHistoryRepository.save(
-                    createSalesHistory(productID, jwtTokenService.getUserIDFromHeaderToken(authHeader)));
+    @Transactional(rollbackFor = Exception.class)
+    public void markProductAsSold(MarkProductAsSoldRequestDTO markProductAsSoldRequestDTO, String authHeader)
+            throws Exception {
+        Long sellerId = jwtTokenService.getUserIDFromHeaderToken(authHeader);
 
-        } catch (Exception e) {
-            throw new Exception("Error on marking product as sold: " + e.getMessage());
-        }
-
+        markProductAsSoldRequestDTO.setSellerId(sellerId);
+        productService.markProductAsSold(markProductAsSoldRequestDTO.getProductId(),
+                sellerId);
+        salesHistoryRepository.save(
+                createSalesHistory(markProductAsSoldRequestDTO.getProductId(),
+                        sellerId));
+        sendRatingEmailHandler(markProductAsSoldRequestDTO);
     }
 
     @Transactional
@@ -144,6 +180,22 @@ public class SellerService {
         }
     }
 
+    private void sendRatingEmailHandler(MarkProductAsSoldRequestDTO markProductAsSoldRequestDTO) throws Exception {
+        try {
+            User buyer = userService.getUserByEmail(markProductAsSoldRequestDTO.getUserEmail());
+            if (auditLogService.hasBuyerRequestedSellerData(buyer.getId(), markProductAsSoldRequestDTO.getSellerId(),
+                    markProductAsSoldRequestDTO.getProductId())) {
+                rateSellerService.createAndSendRatingToken(buyer.getId(), markProductAsSoldRequestDTO.getUserEmail(),
+                        markProductAsSoldRequestDTO.getSellerId(),
+                        markProductAsSoldRequestDTO.getProductId());
+            } else {
+                throw new Exception("This user hasn't required your data!");
+            }
+        } catch (Exception e) {
+            throw new Exception("Error sending rating email: " + e.getMessage());
+        }
+    }
+
     private SalesHistory createSalesHistory(Long productID, Long sellerID) throws Exception {
         try {
             return salesHistoryMapper.sellerProductToSalesHistory(
@@ -154,6 +206,11 @@ public class SellerService {
             throw new Exception("Error creating Sale History : " + e.getMessage());
         }
 
+    }
+
+    private Seller getSellerByID(Long id) throws Exception {
+        return sellerRepository.findById(id)
+                .orElseThrow(() -> new Exception("Seller not found with ID: " + id));
     }
 
 }

@@ -6,9 +6,7 @@ import com.example.praisebackend.auth.jwt.JwtTokenService;
 import com.example.praisebackend.dtos.complaints.ComplaintRequestDTO;
 import com.example.praisebackend.dtos.complaints.ComplaintResponseDTO;
 import com.example.praisebackend.dtos.complaints.GetComplaintsResponseDTO;
-import com.example.praisebackend.dtos.complaints.GetResolvedComplaintsResponseDTO;
 import com.example.praisebackend.dtos.complaints.ResolveComplaintRequestDTO;
-import com.example.praisebackend.dtos.complaints.ResolveComplaintResponseDTO;
 import com.example.praisebackend.dtos.complaints.UpdateComplaintRequestDTO;
 import com.example.praisebackend.dtos.mappers.ComplaintMapper;
 import com.example.praisebackend.models.complaint.Complaint;
@@ -25,13 +23,63 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final JwtTokenService jwtTokenService;
     private final AuditLogService auditLogService;
+    private final ProductService productService;
 
-    public void createComplaint(ComplaintRequestDTO complaintRequestDTO, String authHeader) throws Exception {
+    public ComplaintResponseDTO createBuyerComplaint(ComplaintRequestDTO complaintRequestDTO, String authHeader)
+            throws Exception {
+        Long userId = jwtTokenService.getUserIDFromHeaderToken(authHeader);
+        complaintRequestDTO.setUserID(userId);
+
+        handleSelfComplaint(userId, complaintRequestDTO.getTargetUserID());
+
+        if (!productService.sellerHasProduct(complaintRequestDTO.getProductID(),
+                complaintRequestDTO.getTargetUserID())) {
+            throw new Exception("This product (ID: " + complaintRequestDTO.getProductID()
+                    + ") doesn't belongs to this Seller! (ID: " + complaintRequestDTO.getTargetUserID() + ")");
+        }
+        return createComplaint(complaintRequestDTO);
+    }
+
+    public ComplaintResponseDTO createSellerComplaint(ComplaintRequestDTO complaintRequestDTO, String authHeader)
+            throws Exception {
+        Long userId = jwtTokenService.getUserIDFromHeaderToken(authHeader);
+
+        complaintRequestDTO.setUserID(userId);
+
+        handleSelfComplaint(userId, complaintRequestDTO.getTargetUserID());
+        if (!productService.sellerHasProduct(complaintRequestDTO.getProductID(), userId)) {
+            throw new Exception(
+                    "This product (ID: " + complaintRequestDTO.getProductID() + ") doesn't belongs to you!");
+        }
+        return createComplaint(complaintRequestDTO);
+    }
+
+    private void handleSelfComplaint(Long userId, Long targetUserId) throws Exception {
+        if (userId == targetUserId) {
+            throw new Exception("You cannot complaint yourself!");
+        }
+
+    }
+
+    public ComplaintResponseDTO getOwnComplaint(Long complaintID, String authHeader) throws Exception {
         try {
-            complaintRequestDTO.setUserID(jwtTokenService.getUserIDFromHeaderToken(authHeader));
-            complaintRepository.save(
-                    complaintMapper.complaintRequestDTOToComplaint(complaintRequestDTO));
+            ComplaintResponseDTO complaintResponseDTO = getComplaintByID(complaintID);
+            if (complaintResponseDTO.getUser().getId() == jwtTokenService.getUserIDFromHeaderToken(authHeader)) {
+                return complaintResponseDTO;
+            } else {
+                throw new Exception("Complaint (ID: " + complaintResponseDTO.getId() + ") not found to current user");
+            }
 
+        } catch (Exception e) {
+            throw new Exception("Error fetching complaint: " + e.getMessage());
+        }
+    }
+
+    private ComplaintResponseDTO createComplaint(ComplaintRequestDTO complaintRequestDTO) throws Exception {
+        try {
+            Complaint complaint = complaintRepository
+                    .save(complaintMapper.complaintRequestDTOToComplaint(complaintRequestDTO));
+            return complaintMapper.complaintToComplaintResponseDTO(complaint);
         } catch (Exception e) {
             throw new Exception("Error on creating complaint: " + e.getMessage());
         }
@@ -49,7 +97,8 @@ public class ComplaintService {
         try {
             return GetComplaintsResponseDTO.builder()
                     .complaints(complaintMapper.complaintsToComplaintResponseDTOs(
-                            complaintRepository.findByUserId(jwtTokenService.getUserIDFromHeaderToken(authHeader))))
+                            complaintRepository.findByUserIdOrderByStatusAscDateTimeDesc(
+                                    jwtTokenService.getUserIDFromHeaderToken(authHeader))))
                     .build();
         } catch (Exception e) {
             throw new Exception("Error fetching user's complaints: " + e.getMessage());
@@ -57,26 +106,14 @@ public class ComplaintService {
         }
     }
 
-    public GetComplaintsResponseDTO getAvailableComplaints() throws Exception {
+    public GetComplaintsResponseDTO getComplaints() throws Exception {
         try {
             return GetComplaintsResponseDTO.builder()
                     .complaints(complaintMapper.complaintsToComplaintResponseDTOs(
-                            complaintRepository.findAllExceptStatus(ComplaintStatus.RESOLVED)))
+                            complaintRepository.findAllByOrderByStatusAscDateTimeDesc()))
                     .build();
         } catch (Exception e) {
             throw new Exception("Error fetching available complaints: " + e.getMessage());
-
-        }
-    }
-
-    public GetResolvedComplaintsResponseDTO getResolvedComplaints() throws Exception {
-        try {
-            return GetResolvedComplaintsResponseDTO.builder()
-                    .resolvedComplaints(complaintMapper.complaintsToResolveComplaintResponseDTOs(
-                            complaintRepository.findByStatus(ComplaintStatus.RESOLVED)))
-                    .build();
-        } catch (Exception e) {
-            throw new Exception("Error fetching resolved complaints: " + e.getMessage());
 
         }
     }
@@ -106,7 +143,7 @@ public class ComplaintService {
         }
     }
 
-    public ResolveComplaintResponseDTO resolveComplaint(ResolveComplaintRequestDTO resolveComplaintRequestDTO)
+    public ComplaintResponseDTO resolveComplaint(ResolveComplaintRequestDTO resolveComplaintRequestDTO)
             throws Exception {
         try {
             Complaint complaint = updateComplaintStatus(resolveComplaintRequestDTO.getComplaintId(),
@@ -115,7 +152,7 @@ public class ComplaintService {
             auditLogService.logResolveComplaint(resolveComplaintRequestDTO.getAdminId(),
                     resolveComplaintRequestDTO.getComplaintId(), resolveComplaintRequestDTO.getResolutionDetails());
 
-            return complaintMapper.complaintToResolveComplaintResponseDTO(complaint);
+            return complaintMapper.complaintToComplaintResponseDTO(complaint);
         } catch (Exception e) {
             throw new Exception("Error resolving complaint: " + e.getMessage());
         }

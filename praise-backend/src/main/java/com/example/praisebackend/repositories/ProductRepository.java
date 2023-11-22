@@ -14,16 +14,21 @@ import com.example.praisebackend.models.product.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findBySellerId(Long sellerId);
+    List<Product> findByIsSoldFalseOrderByCreationTimeDesc();
 
-    List<Product> findBySellerIdAndIsSoldFalseAndIsSuspendedFalse(Long sellerID);
+    List<Product> findBySellerIdOrderByCreationTimeDesc(Long sellerId);
 
-    List<Product> findByIsSoldFalseAndIsSuspendedFalse();
+    List<Product> findBySellerIdAndIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc(Long sellerId);
 
-    List<Product> findByCategory(Category category);
+    List<Product> findByIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc();
+
+    List<Product> findByCategoryAndIsSoldFalseAndIsSuspendedFalseOrderByCreationTimeDesc(Category category);
 
     @Query("SELECT p FROM Product p WHERE p.creationTime >= :date")
     List<Product> getProductsCreatedAfter(LocalDateTime date);
+
+    @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId AND p.category = :category AND p.id <> :productId")
+    List<Product> findTop5BySellerIdAndCategoryExcludingProductId(Long sellerId, Category category, Long productId);
 
     Optional<Product> findByIdAndSellerId(Long id, Long sellerId);
 
