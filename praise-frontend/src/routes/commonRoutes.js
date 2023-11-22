@@ -1,4 +1,4 @@
-import ComplaintView from '../pages/common-pages/ComplaintView';
+import ComplaintView from '../pages/common-pages/complaint-view/ComplaintView';
 import ProductView from '../pages/common-pages/product-view/ProductView';
 import ProductsBySeller from '../pages/common-pages/ProductsBySeller';
 

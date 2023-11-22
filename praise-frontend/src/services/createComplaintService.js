@@ -1,8 +1,9 @@
 
-export const createComplaint = async (axiosInstance, complaintData) => {
+export const createComplaintService = async (axiosInstance, complaintData) => {
   try {
 
     const response = await axiosInstance.post('/complaints', complaintData);
+    console.log("Complaint Created! " + complaintData);
     return response.data;
 
   } catch (error) {

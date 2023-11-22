@@ -15,6 +15,7 @@ import PageNotFound from './pages/shared/PageNotFound';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ProductProvider } from './context/ProductContext';
+import ComplaintsProvider from './context/ComplaintContext';
 
 
 function App() {
@@ -33,9 +34,9 @@ function App() {
       theme="dark"
     />  
     <AuthProvider>
-    <ProductProvider>
     <UserProvider>
      <ProductProvider>
+     <ComplaintsProvider>
      <div className='parent-container'>
        <Router>
             <ScrollToTop />
@@ -81,9 +82,9 @@ function App() {
             </div>
         </Router>
       </div>
+      </ComplaintsProvider>
      </ProductProvider>
     </UserProvider>
-    </ProductProvider>
     </AuthProvider>
     
     </>

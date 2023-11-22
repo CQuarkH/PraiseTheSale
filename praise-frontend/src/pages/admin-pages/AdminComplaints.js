@@ -1,20 +1,31 @@
 
-import { React, useState, useMemo, useCallback} from 'react';
+import { React, useState, useMemo, useCallback, useEffect} from 'react';
 import Filters from '../../components/common/Filters';
 import ListView from '../../components/common/ListView';
 import SearchBarComponent from '../../components/common/SearchBarComponent';
-import { complaints } from '../../test-api/complaints/Complaints';
 import Header from '../../components/common/Header';
 import ComplaintTile from '../../components/common/ComplaintTile';
+import { useComplaints } from '../../context/ComplaintContext';
 
 function AdminComplaints() {
 
-  const [filteredComplaints, setFilteredComplaints] = useState(complaints);
+  const { complaints, fetchComplaints } = useComplaints();
+  const [filteredComplaints, setFilteredComplaints] = useState([]);
+
+  useEffect(() => {
+    fetchComplaints();
+  }, [])
+
+  useEffect(() => {
+    setFilteredComplaints(complaints);
+  }, [complaints])
+  
 
   const complaintFilterGroups = useMemo(() => ({
     status: [
-      { id: 'resolved', label: 'Resolved', filterFn: complaint => complaint.status === 'resolved'},
-      { id: 'pending', label: 'Pending', filterFn: complaint => complaint.status === 'pending'}
+      { id: 'resolved', label: 'Resolved', filterFn: complaint => complaint.complaintStatus === 'RESOLVED'},
+      { id: 'pending', label: 'Pending', filterFn: complaint => complaint.complaintStatus === 'PENDING'},
+      { id: 'under_revision', label: 'Under Investigation', filterFn: complaint => complaint.complaintStatus === 'UNDER_INVESTIGATION'}
     ],
     date: [
       { id: 'lastWeek', label: 'Last Week', filterFn: complaint => {

@@ -28,13 +28,13 @@ function ComplaintTile({element: complaint}){
           </div>
           <div className='block-tile' style={{flex: '1'}}>
             <div className='standout-list-tile'>
-              <span>User ID : {complaint.userID} </span>
+              <span>User ID : {complaint.user.id} </span>
             </div>
             <div className='standout-list-tile'>
-              <span>Product ID : {complaint.productID} </span>
+              <span>Product ID : {complaint.product.id} </span>
             </div>
             <div className='standout-list-tile'>
-              <span>Target User ID : {complaint.targetID} </span>
+              <span>Target User ID : {complaint.targetUser.id} </span>
             </div>
           </div>
           <div className='block-tile hide-on-responsive' style={{flex: '2'}}>

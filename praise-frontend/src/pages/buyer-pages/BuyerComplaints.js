@@ -6,15 +6,13 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchBarComponent from '../../components/common/SearchBarComponent';
 import ListView from '../../components/common/ListView';
 import ComplaintTile from '../../components/common/ComplaintTile';
-import { useAxios } from '../../api/useAxios';
-
+import { useComplaints } from '../../context/ComplaintContext';
 
 
 function BuyerComplaints() {
 
-  const [ userComplaints, setUserComplaints ] = useState([]);
+  const { complaints, fetchComplaints } = useComplaints();
   const [ filteredComplaints, setFilteredComplaints ] = useState([]);
-  const axiosInstance = useAxios();
 
   const [ isAddingComplaint, setIsAddingComplaint ] = useState(false);
 
@@ -25,30 +23,28 @@ function BuyerComplaints() {
   const formattedComplaintData = {
     inputRow: [
         { name: 'subject', placeholder: 'Subject...', label : "Complaint Subject"},
-        { name: 'sellerID', placeholder: 'Seller ID...', label : "Seller ID"},
+        { name: 'targetUserID', placeholder: 'Seller ID...', label : "Seller ID"},
         { name: 'productID', placeholder: 'Product ID...', label : "Product ID"}
     ],
     inputBlock : {
-        name: 'description', placeholder: 'Write your complaint description...', label: "Complaint Description"
+        name: 'context', placeholder: 'Write your complaint description...', label: "Complaint Description"
     }
   }
 
   useEffect(() => {
-    axiosInstance.get("/complaints")
-    .then(response => {
-      setUserComplaints(response.data.complaints);
-      setFilteredComplaints(response.data.complaints);
-    })
-    .catch(error => {
-      console.error(error);
-    })
+    fetchComplaints();
   }, [])
+
+  useEffect(() => {
+    setFilteredComplaints(complaints);
+  }, [complaints])
+
 
   const searchBarComponent = useMemo(() => (
     <SearchBarComponent
-    elements={userComplaints}
+    elements={complaints}
     setFilteredElements={setFilteredComplaints}
-    searchBy={['id', 'subject', 'dateTime']}
+    searchBy={['id', 'subject', 'dateTime', 'complaintStatus']}
     />
   ), [])
 

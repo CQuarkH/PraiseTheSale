@@ -1,22 +1,14 @@
 import {React, useState, useEffect} from 'react';
 import ProductListComponent from '../../components/layout/ProductListComponent';
 import { Outlet } from 'react-router-dom';
-import { useAxios } from '../../api/useAxios';
+import { useProducts } from '../../context/ProductContext';
 
 function BuyerHome() {
 
-  const [ products, setProducts ] = useState([]);
-  const axiosInstance = useAxios('buyer');
+  const { fetchProducts, products } = useProducts();
 
   useEffect(() => {
-    axiosInstance.get('/products')
-    .then(response => {
-      setProducts(response.data.products);
-    })
-    .catch(error => {
-      console.error(error);
-    })
-
+    fetchProducts();
   }, []);
 
 

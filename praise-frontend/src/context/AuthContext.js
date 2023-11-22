@@ -16,9 +16,11 @@ export const AuthProvider = ({ children }) => {
         const storedRole = localStorage.getItem('authRole');
 
         if (storedToken) {
+            const endpoint = storedRole === 'SELLER' ? '/user/seller-profile' : '/user/profile';
+
             setAuthData(prevState => ({ ...prevState, token: storedToken, role: storedRole }));
 
-            axios.get("http://localhost:8080/api/user/profile", {
+            axios.get(`http://localhost:8080/api${endpoint}`, {
                 headers: {
                     Authorization: `Bearer ${storedToken}`
                 }
@@ -45,8 +47,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     const updateUserData = async (axiosInstance, newUserData) => {
-        try{
-         const updatedUser = await updateUserProfile(axiosInstance, newUserData);
+        try{   
+         const updatedUser = await updateUserProfile(axiosInstance, newUserData, authData.role);
          setAuthData(prevState => ({ ...prevState, user: updatedUser }));
         } catch (error){
           console.error(error);

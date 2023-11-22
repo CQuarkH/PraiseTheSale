@@ -6,13 +6,11 @@ import FloatingActionButton from '../../components/common/FloatingActionButton';
 import AddIcon from '@mui/icons-material/Add';
 import Header from '../../components/common/Header';
 import SearchBarComponent from '../../components/common/SearchBarComponent';
-import { useAxios } from '../../api/useAxios';
+import { useComplaints } from '../../context/ComplaintContext';
 
 function SellerComplaints() {
 
-  const axiosInstance = useAxios();
-
-  const [ userComplaints, setUserComplaints ] = useState([]);
+  const { complaints, fetchComplaints } = useComplaints();
   const [ filteredComplaints, setFilteredComplaints ] = useState([]);
 
   const [ isAddingComplaint, setIsAddingComplaint ] = useState(false);
@@ -22,22 +20,18 @@ function SellerComplaints() {
   }
 
   useEffect(() => {
-    axiosInstance.get('/complaints').then(
-      response => {
-        setUserComplaints(response.data.complaints);
-        setFilteredComplaints(response.data.complaints);
-      }
-    ).catch(error => {
-      console.error(error);
-    })
-    
+    fetchComplaints();
   }, []);
+
+  useEffect(() => {
+    setFilteredComplaints(complaints);
+  }, [complaints])
 
   const searchBarComponent = useMemo(() => (
     <SearchBarComponent
-    elements={userComplaints}
+    elements={complaints}
     setFilteredElements={setFilteredComplaints}
-    searchBy={['id', 'subject', 'dateTime']}
+    searchBy={['id', 'subject', 'dateTime', 'complaintStatus']}
     />
   ), [])
 

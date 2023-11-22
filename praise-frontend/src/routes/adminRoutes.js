@@ -7,7 +7,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import ProductView from '../pages/common-pages/product-view/ProductView';
-import AdminUserView from '../pages/admin-pages/AdminUserView';
+import AdminUserView from '../pages/admin-pages/admin-user-view/AdminUserView';
 
 
 export const adminRoutes = [

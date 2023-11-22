@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import ProductListComponent from '../../components/layout/ProductListComponent'
 import FloatingActionButton from '../../components/common/FloatingActionButton';
 import AddIcon from '@mui/icons-material/Add';

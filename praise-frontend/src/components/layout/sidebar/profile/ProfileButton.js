@@ -34,7 +34,7 @@ function ProfileButton() {
               <img 
                 src={authData.user.imageLink} 
                 alt="Profile" 
-                style={{ width: '50px', height: '50px', borderRadius: '10px' }} 
+                style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover'}} 
               />
             ) : (
               <AccountBoxIcon fontSize="large" style={{ color: "#98FF98" }} />

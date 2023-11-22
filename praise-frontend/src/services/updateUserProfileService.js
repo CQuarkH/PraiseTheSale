@@ -1,8 +1,9 @@
 import { uploadImageService } from "./uploadImageService";
 
-export const updateUserProfile = async (axiosInstance, profileData) => {
+export const updateUserProfile = async (axiosInstance, profileData, role) => {
     try {
-        const response = await axiosInstance.put('/profile', profileData);
+        const endpoint = role === 'SELLER' ? '/seller-profile' : '/profile';
+        const response = await axiosInstance.put(endpoint, profileData);
         return response.data;
 
     } catch (error){

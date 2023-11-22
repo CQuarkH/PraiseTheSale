@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
-import { useAxios } from '../api/useAxios';
-import updateOrCreateProductService from '../services/updateOrCreateProductService';
+import React, { createContext, useState, useContext, useCallback } from "react";
+import { useAxios } from "../api/useAxios";
+import updateOrCreateProductService from "../services/updateOrCreateProductService";
 
 const ProductContext = createContext();
 
@@ -13,7 +13,7 @@ export const ProductProvider = ({ children }) => {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axiosInstance.get('/products');
+      const response = await axiosInstance.get("/products");
       setProducts(response.data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -21,81 +21,96 @@ export const ProductProvider = ({ children }) => {
   }, [axiosInstance]);
 
   const fetchSalesHistory = async () => {
-    try{
-      const response = await axiosInstance.get('/sales-history');
+    try {
+      const response = await axiosInstance.get("/sales-history");
       setSalesHistory(response.data.salesHistory);
     } catch (error) {
       console.error("Error fetching products:", error);
       throw error;
     }
-  }
+  };
 
   const createOrUpdateProduct = async (productData, fileSelect) => {
     try {
-      const response = await updateOrCreateProductService(axiosInstance, productData, fileSelect);
-       if (productData.id) {
-         setProducts(prevProducts =>
-         prevProducts.map((product) =>
-          product.id === productData.id ? { ...product, ...response } : product
-         )
+      const response = await updateOrCreateProductService(
+        axiosInstance,
+        productData,
+        fileSelect
+      );
+
+      const updatedProducts = [...products];
+
+      if (productData.id) {
+        const productIndex = updatedProducts.findIndex(
+          (product) => product.id === productData.id
         );
-       } else {
-        setProducts(prevProducts => [...prevProducts, response]);
+
+        updatedProducts[productIndex] = { ...productData, ...response };
+      } else {
+        updatedProducts.unshift(response);
       }
-    } catch (error){
-        console.error("Error creating product:", error);
-        throw error;
+
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
     }
-  }
+  };
 
   const deleteProduct = async (productId) => {
-    try{
+    try {
       await axiosInstance.delete(`/products/${productId}`);
-      setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
-      setSalesHistory(prevSales =>
-        prevSales.filter(sale => sale.product.id !== productId)
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== productId)
       );
-    } catch (error){
+      setSalesHistory((prevSales) =>
+        prevSales.filter((sale) => sale.product.id !== productId)
+      );
+    } catch (error) {
       console.error(error);
       throw error;
     }
   };
 
   const markProductAsSold = async (soldProduct) => {
-    try{
+    try {
       await axiosInstance.put(`/products/${soldProduct.id}/mark-as-sold`);
-      setProducts(prevProducts => prevProducts.filter(product => product.id !== soldProduct.id));
-      setSalesHistory(prevSales => [...prevSales, soldProduct]);
-    } catch (error){
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== soldProduct.id)
+      );
+      setSalesHistory((prevSales) => [soldProduct, ...prevSales]);
+    } catch (error) {
       console.error(error);
       throw error;
     }
   };
 
   const unmarkProductAsSold = async (unsoldProduct) => {
-    try{
+    try {
       await axiosInstance.put(`/products/${unsoldProduct.id}/unmark-as-sold`);
       console.log(unsoldProduct.id);
-      setProducts(prevProducts => [...prevProducts, unsoldProduct]);
-      setSalesHistory(prevSales =>
-        prevSales.filter(sale => sale.product.id !== unsoldProduct.id)
+      setProducts((prevProducts) => [...prevProducts, unsoldProduct]);
+      setSalesHistory((prevSales) =>
+        prevSales.filter((sale) => sale.product.id !== unsoldProduct.id)
       );
-    } catch (error){
+    } catch (error) {
       console.error(error);
       throw error;
     }
   };
 
   return (
-    <ProductContext.Provider value={{ 
-        products, 
+    <ProductContext.Provider
+      value={{
+        products,
         salesHistory,
         fetchProducts,
         fetchSalesHistory,
         createOrUpdateProduct,
-        deleteProduct, 
-        markProductAsSold, 
-        unmarkProductAsSold }}>
+        deleteProduct,
+        unmarkProductAsSold,
+      }}
+    >
       {children}
     </ProductContext.Provider>
   );

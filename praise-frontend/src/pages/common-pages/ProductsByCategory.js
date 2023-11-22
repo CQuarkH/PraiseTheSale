@@ -6,6 +6,7 @@ import ProductListComponent from '../../components/layout/ProductListComponent';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AnimatedButton from '../../components/common/AnimatedButton';
 import { useAxios } from '../../api/useAxios';
+import { capitalizeFirstLetter } from '../../components/common/utils';
 
 function ProductsByCategory() {
 
@@ -53,7 +54,7 @@ function ProductsByCategory() {
             <span>
                 <div className='standout-list-tile-invert'>
                     <SellIcon style={{marginRight: '10px'}}/>
-                    <span> {categoryName} </span>
+                    <span> {capitalizeFirstLetter(categoryName)} </span>
                 </div>
             </span>
             </div>
