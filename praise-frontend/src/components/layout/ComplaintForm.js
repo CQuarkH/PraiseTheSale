@@ -8,6 +8,7 @@ import AnimatedButton from "../common/AnimatedButton";
 import AsyncButton from "../common/AsyncButton";
 import { toast } from "react-toastify";
 import { useComplaints } from "../../context/ComplaintContext";
+import { COMPLAINT_DESCRIPTION_RULES } from "../../utils/InputRules";
 
 function ComplaintForm({ formattedComplaintData, onClose, layoutID }) {
   const { createComplaint } = useComplaints();
@@ -26,15 +27,8 @@ function ComplaintForm({ formattedComplaintData, onClose, layoutID }) {
     },
   };
 
-  const TEXTAREA_RULES = {
-    required: "This field is required",
-    minLength: {
-      value: 10,
-      message: "Must be at least 10 characters",
-    },
-  };
-
   const ID_RULES = {
+    required: "This field is required",
     pattern: {
       value: /^[0-9]+$/,
       message: "Must be a number",
@@ -47,6 +41,10 @@ function ComplaintForm({ formattedComplaintData, onClose, layoutID }) {
     pattern: {
       value: /^[A-Za-z ]+$/,
       message: "Must contain only letters",
+    },
+    maxLength: {
+      value: 30,
+      message: "Subject should not exceed 30 characters",
     },
   };
 
@@ -73,7 +71,7 @@ function ComplaintForm({ formattedComplaintData, onClose, layoutID }) {
 
   const determineRules = (inputName) => {
     if (inputName.includes("ID")) {
-      return { ...BASE_RULES, ...ID_RULES };
+      return { ID_RULES };
     } else if (inputName === "subject") {
       return SUBJECT_RULES;
     }
@@ -140,7 +138,7 @@ function ComplaintForm({ formattedComplaintData, onClose, layoutID }) {
             placeholder={formattedComplaintData.inputBlock.placeholder}
             label={formattedComplaintData.inputBlock.label}
             defaultValue={formattedComplaintData.inputBlock.value || ""}
-            rules={TEXTAREA_RULES}
+            rules={COMPLAINT_DESCRIPTION_RULES}
             isTextarea={true}
             error={errors[formattedComplaintData.inputBlock.name]}
             variants={itemVariants}

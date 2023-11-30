@@ -8,6 +8,23 @@ body {
   background-color: #0d0f17;
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a304c;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(42, 48, 76, 0.8);
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -139,7 +156,7 @@ textarea {
 
 .page-header {
   display: flex;
-  z-index: 200;
+  z-index: 100;
   justify-content: space-between;
   background-color: #1b1f31;
   color: white;
@@ -476,6 +493,12 @@ textarea {
   flex: 1;
 }
 
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .block-tile {
   display: flex;
   flex: 1;
@@ -492,6 +515,7 @@ textarea {
 }
 
 .profile-overlay {
+  overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
@@ -513,6 +537,7 @@ textarea {
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 200;
 }
 
 .card-options-container {

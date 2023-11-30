@@ -1,45 +1,19 @@
 import React, { useState } from "react";
 import CustomInput from "../../../common/CustomInput";
-import SaveIcon from "@mui/icons-material/Save";
+import {
+  NAME_RULES,
+  DESCRIPTION_RULES,
+  PHONE_RULES,
+  IMAGE_RULES,
+} from "../../../../utils/InputRules";
 import AnimatedButton from "../../../common/AnimatedButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useForm } from "react-hook-form";
 import ImageUploaderButton from "../../../common/ImageUploaderButton";
+import AsyncButton from "../../../common/AsyncButton";
 import { useAxios } from "../../../../api/useAxios";
 import { useAuth } from "../../../../context/AuthContext";
 import { uploadImageService } from "../../../../services/uploadImageService";
-
-const NAME_RULES = {
-  required: "Full name is required",
-  minLength: {
-    value: 2,
-    message: "Full name should have at least 2 characters!",
-  },
-  pattern: {
-    value: /^[A-Za-z\s]+$/,
-    message: "Full name must contain only letters",
-  },
-};
-
-const PHONE_RULES = {
-  required: "Contact phone is required",
-  pattern: {
-    value: /^(?:\((0[1-9])\)\s?|9)\d{4}\s?\d{4}$/,
-    message: "Invalid Chilean phone number format!",
-  },
-};
-
-const EMAIL_RULES = {
-  required: "Email is required",
-  pattern: {
-    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-    message: "Invalid email format!",
-  },
-};
-
-const IMAGE_RULES = {
-  required: "You must select an image!",
-};
 
 function UpdateProfileCard({ user, toggleUpdating }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -89,11 +63,13 @@ function UpdateProfileCard({ user, toggleUpdating }) {
           Update Profile{" "}
         </span>
 
-        <AnimatedButton
-          Icon={<SaveIcon style={{ color: "#98FF98" }} />}
-          onClick={handleSubmit(onSubmit)}
+        <AsyncButton
+          asyncOnClick={handleSubmit(onSubmit)}
+          text="Save"
+          style={{ maxHeight: "40px", maxWidth: "100px" }}
         />
       </div>
+      <div className="divider-horizontal" />
       <div
         className="card-content-container"
         style={{ maxHeight: "100%", overflowY: "auto" }}
@@ -130,6 +106,7 @@ function UpdateProfileCard({ user, toggleUpdating }) {
           <div className="block-tile ml-0" style={{ flex: 2 }}>
             <CustomInput
               error={errors.description}
+              rules={DESCRIPTION_RULES}
               style={{ marginBottom: 0, padding: 0, height: "300px" }}
               label="Description"
               placeholder="Write your description"

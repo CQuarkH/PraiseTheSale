@@ -26,9 +26,9 @@ function ProductListComponent({
             filterFn: (product) => product.category === "ELECTRONICS",
           },
           {
-            id: "clothing",
-            label: "Clothing",
-            filterFn: (product) => product.category === "CLOTHING",
+            id: "fashion",
+            label: "Fashion",
+            filterFn: (product) => product.category === "FASHION",
           },
           {
             id: "books",

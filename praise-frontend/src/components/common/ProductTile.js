@@ -55,9 +55,20 @@ function ProductTile({ element: product, animate = true }) {
               </div>
             )}
           </div>
-          <div className="block-tile hide-on-responsive" style={{ flex: 2 }}>
+          <div
+            className="block-tile hide-on-responsive"
+            style={{ flex: 2, maxWidth: "400px" }}
+          >
             <h4> Description </h4>
-            <div className="standout-list-tile">
+            <div
+              className="standout-list-tile"
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxHeight: "3.5em",
+              }}
+            >
               <p>{product.description}</p>
             </div>
           </div>

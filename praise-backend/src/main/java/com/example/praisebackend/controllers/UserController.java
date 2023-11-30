@@ -67,10 +67,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete-account")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/delete-account/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
         try {
-            userService.deleteUser(id);
+            userService.deleteUser(userId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

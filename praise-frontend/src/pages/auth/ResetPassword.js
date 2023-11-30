@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomInput from "../../components/common/CustomInput";
-import TextButton from "../../components/common/TextButton";
+import { PASSWORD_RULES } from "../../utils/InputRules";
 import { toast } from "react-toastify";
 import axios from "axios";
 import AsyncButton from "../../components/common/AsyncButton";
@@ -10,14 +10,6 @@ import AsyncButton from "../../components/common/AsyncButton";
 function ResetPassword() {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const PASSWORD_RULES = {
-    required: "Password is required",
-    minLength: {
-      value: 8,
-      message: "Password must be at least 8 characters long",
-    },
-  };
 
   const REPEAT_PASSWORD_RULES = {
     required: "Please repeat the password",

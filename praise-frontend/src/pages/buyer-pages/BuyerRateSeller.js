@@ -65,9 +65,7 @@ function BuyerRateSeller() {
 
   if (!isLoading && seller === null) {
     return <PageNotFound />;
-  }
-
-  console.log(seller);
+  } 
 
   return (
     <div className="profile-overlay">

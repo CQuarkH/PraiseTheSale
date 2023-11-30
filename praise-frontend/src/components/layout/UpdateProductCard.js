@@ -5,55 +5,22 @@ import CustomInput from "../common/CustomInput";
 import SelectInput from "../common/SelectInput";
 import ImageUploaderButton from "../common/ImageUploaderButton";
 import { useForm } from "react-hook-form";
+import {
+  PRODUCT_NAME_RULES,
+  PRODUCT_DESCRIPTION_RULES,
+  PRICE_RULES,
+  CATEGORY_RULES,
+  CONDITION_RULES,
+  IMAGE_RULES,
+} from "../../utils/InputRules";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   categoriesValues,
   conditionValues,
 } from "../../test-api/products/Product";
-import TextButton from "../common/TextButton";
 import { useProducts } from "../../context/ProductContext";
 import { toast } from "react-toastify";
 import AsyncButton from "../common/AsyncButton";
-
-const NAME_RULES = {
-  required: "Product name is required",
-  minLength: {
-    value: 2,
-    message: "Product name should have at least 2 characters",
-  },
-  maxLength: {
-    value: 60,
-    message: "Product name should not exceed 60 characters",
-  },
-};
-
-const PRICE_RULES = {
-  required: "Price is required",
-  pattern: {
-    value: /^[+]?([0-9]*[.])?[0-9]+$/,
-    message: "Price should be a positive number",
-  },
-};
-
-const DESCRIPTION_RULES = {
-  required: "Description is required",
-  maxLength: {
-    value: 250,
-    message: "Description should not exceed 250 characters",
-  },
-};
-
-const CATEGORY_RULES = {
-  required: "Category is required",
-};
-
-const CONDITION_RULES = {
-  required: "Condition is required",
-};
-
-const IMAGE_RULES = {
-  required: "You must select an image!",
-};
 
 function UpdateProductCard({ setIsAddingProduct, product, layoutID }) {
   const {
@@ -122,7 +89,7 @@ function UpdateProductCard({ setIsAddingProduct, product, layoutID }) {
           <div className="block-tile ml-0" style={{ flex: 2 }}>
             <CustomInput
               name="name"
-              rules={NAME_RULES}
+              rules={PRODUCT_NAME_RULES}
               error={errors.name}
               control={control}
               defaultValue={product?.name}
@@ -179,7 +146,7 @@ function UpdateProductCard({ setIsAddingProduct, product, layoutID }) {
             <div className="block-tile ml-0" style={{ flex: 4 }}>
               <CustomInput
                 name="description"
-                rules={DESCRIPTION_RULES}
+                rules={PRODUCT_DESCRIPTION_RULES}
                 error={errors.description}
                 control={control}
                 defaultValue={product?.description}

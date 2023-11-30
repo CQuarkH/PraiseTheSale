@@ -118,7 +118,15 @@ function ProductLayout({ product, seller, authRole, onBackClick }) {
         >
           <div className="standout-list-tile-column">
             <h4> Description </h4>
-            <div className="standout-list-tile-invert">
+            <div className="divider-horizontal" />
+            <div
+              className="standout-list-tile"
+              style={{
+                overflowY: "auto",
+                lineHeight: "1.5em",
+                maxHeight: "4.5em",
+              }}
+            >
               <p> {product.description} </p>
             </div>
           </div>

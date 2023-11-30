@@ -97,7 +97,7 @@ public class ComplaintService {
         try {
             return GetComplaintsResponseDTO.builder()
                     .complaints(complaintMapper.complaintsToComplaintResponseDTOs(
-                            complaintRepository.findByUserIdOrderByStatusAscDateTimeDesc(
+                            complaintRepository.findByUserIdOrderByDateTimeDesc(
                                     jwtTokenService.getUserIDFromHeaderToken(authHeader))))
                     .build();
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class ComplaintService {
         try {
             return GetComplaintsResponseDTO.builder()
                     .complaints(complaintMapper.complaintsToComplaintResponseDTOs(
-                            complaintRepository.findAllByOrderByStatusAscDateTimeDesc()))
+                            complaintRepository.findAllByOrderByDateTimeDesc()))
                     .build();
         } catch (Exception e) {
             throw new Exception("Error fetching available complaints: " + e.getMessage());

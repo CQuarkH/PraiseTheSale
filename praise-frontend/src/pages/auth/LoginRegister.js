@@ -1,50 +1,25 @@
 import React, { useState } from "react";
 import StoreIcon from "@mui/icons-material/Store";
 import Tab from "../../components/common/Tab";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import CustomInput from "../../components/common/CustomInput";
-import TextButton from "../../components/common/TextButton";
+import {
+  NAME_RULES,
+  PASSWORD_RULES,
+  EMAIL_RULES,
+} from "../../utils/InputRules";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import AsyncButton from "../../components/common/AsyncButton";
 
-const NAME_RULES = {
-  required: "Full name is required",
-  minLength: {
-    value: 2,
-    message: "Full name should have at least 2 characters!",
-  },
-  pattern: {
-    value: /^[A-Za-z ]+$/,
-    message: "Full name must contain only letters",
-  },
-};
-
-const EMAIL_RULES = {
-  required: "Email is required",
-  pattern: {
-    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-    message: "Invalid email format",
-  },
-};
-
-const PASSWORD_RULES = {
-  required: "Password is required",
-  minLength: {
-    value: 8,
-    message: "Password must be at least 8 characters long",
-  },
-};
-
 function LoginRegister() {
   const [isLogin, setIsLogin] = useState(true);
   const {
     control,
-    register,
     handleSubmit,
     formState: { errors },
     watch,

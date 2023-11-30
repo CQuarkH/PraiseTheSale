@@ -19,6 +19,7 @@ import UpdateProfileCard from "./UpdateProfileCard";
 import { useAuth } from "../../../../context/AuthContext";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { formatChileanDateTime } from "../../../common/utils";
+import ProfileMenu from "./ProfileMenu";
 
 function ProfileCard({ user, closeCard, layoutID }) {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -61,13 +62,8 @@ function ViewProfileCard({ user, closeCard, toggleUpdating, logout }) {
         />
 
         <div className="flex-aligned-container">
-          <AnimatedButton
-            onClick={() => logout()}
-            margin={10}
-            Icon={<LogoutIcon />}
-          />
-
           <AnimatedButton Icon={<EditIcon />} onClick={toggleUpdating} />
+          <ProfileMenu />
         </div>
       </div>
       <div className="card-content-container">
@@ -85,9 +81,11 @@ function ViewProfileCard({ user, closeCard, toggleUpdating, logout }) {
           )}
           <div
             className="standout-list-tile"
-            style={{ flex: "1", marginBottom: "20px" }}
+            style={{ flex: "1", maxHeight: "50px" }}
           >
-            <p style={{ textAlign: "justify" }}> {user.description} </p>
+            <p style={{ textAlign: "justify", overflowY: "auto" }}>
+              {user.description}
+            </p>
           </div>
         </div>
         <div className="divider" />

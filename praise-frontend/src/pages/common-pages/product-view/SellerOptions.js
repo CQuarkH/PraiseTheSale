@@ -124,7 +124,11 @@ function MarkProductAsSoldCard({
 
   return (
     <div className="profile-overlay">
-      <motion.div className="dialog-card" layoutId={layoutID}>
+      <motion.div
+        className="dialog-card"
+        layoutId={layoutID}
+        style={{ height: "25%", width: "40%" }}
+      >
         <div className="flex-aligned-container">
           <div onClick={onClose}>
             <CloseIcon />
@@ -139,7 +143,6 @@ function MarkProductAsSoldCard({
         <div className="divider-horizontal" />
         <CustomInput
           control={control}
-          isTextarea={true}
           rules={EMAIL_RULES}
           error={errors.email}
           name="email"

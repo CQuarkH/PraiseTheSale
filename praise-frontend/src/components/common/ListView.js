@@ -53,7 +53,7 @@ function ListView({ elements, ElementComponent, grid = false }) {
         >
           <Lottie
             animationData={animationData}
-            style={{ width: "200px", height: "200px" }}
+            style={{ width: "200px", height: "200px", zIndex: 2 }}
           />
           <p>Oops! It looks like there are no items available at the moment.</p>
           <p>Please check back later or try a different search.</p>

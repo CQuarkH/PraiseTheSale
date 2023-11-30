@@ -9,14 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { toast } from "react-toastify";
 import axios from "axios";
 import AsyncButton from "../../components/common/AsyncButton";
-
-const EMAIL_RULES = {
-  required: "Email is required",
-  pattern: {
-    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-    message: "Invalid email format",
-  },
-};
+import { EMAIL_RULES } from "../../utils/InputRules";
 
 function ForgotPassword() {
   const {
